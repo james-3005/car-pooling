@@ -8,9 +8,9 @@
       dense
       v-bind="$attrs"
       multiple
-      :no-data-text="$t('noDataSelect')"
+      no-data-text="Không có dữ liệu"
       class="multiSelectField"
-      :menu-props="{ contentClass: 'mt-10 listItem' }"
+      :menu-props="{ contentClass: 'mt-10 listItem white' }"
       @blur="handleBlur"
       @change="onChange"
     >

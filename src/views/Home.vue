@@ -23,11 +23,11 @@ import { Vue, Component, Prop } from "vue-property-decorator";
 @Component
 export default class Home extends Vue {
   menus = MENU_HOME;
-
-  mounted() {
-    // this.confirm({ content: "123123", checkAction: () => {}, title: 'Xâ' });
-    this.alert.success("cai lone ma");
-  }
+  //
+  // mounted() {
+  //   // this.confirm({ content: "123123", checkAction: () => {}, title: 'Xâ' });
+  //   this.alert.success("cai lone ma");
+  // }
 }
 </script>
 <style lang="scss" scoped>

@@ -2,90 +2,99 @@
   <v-app id="inspire">
     <NavBar />
     <v-main>
-      <v-container
-        fluid
-        class="my-container pa-0 flex-column"
-        style="flex: 1; display: flex; height: 100%"
-      >
-        <div
-          class="mx-3 my-2 d-flex align-center justify-space-between"
-        >
-<!--          <h1 class="screen-title">{{ pageTitle }}</h1>-->
-<!--          <div class="text-right" v-if="backScreen && backScreen !== 'none'">-->
-<!--            <ButtonIcon-->
-<!--              class="secondary black&#45;&#45;text"-->
-<!--              :icon="$t('ic.arrowLeft')"-->
-<!--              :text="btnBackText"-->
-<!--              @click="back"-->
-<!--            />-->
-<!--          </div>-->
-        </div>
-        <v-fade-transition mode="out-in">
-          <router-view />
-        </v-fade-transition>
+      <v-container fluid class="my-container pa-0 d-flex flex-column h-100">
+        <gmap-map :center="center" :zoom="16" style="width: 100%; height: 100%">
+          <gmap-marker
+            v-if="location.startLocation"
+            :position="locationToValue(location.startLocation)"
+            @click="() => changeCenter(location.startLocation)"
+          />
+          <gmap-marker
+              v-if="location.endLocation"
+              :position="locationToValue(location.endLocation)"
+              @click="() => changeCenter(location.endLocation)"
+          />
+          <gmap-marker
+            :key="index"
+            v-for="(m, index) in markers"
+            :position="m.position"
+            @click="center = m.position"
+          ></gmap-marker>
+        </gmap-map>
       </v-container>
     </v-main>
   </v-app>
 </template>
 
-<script lang="ts">
+<script>
 import NavBar from "@/components/layout/NavBar.vue";
 import ButtonIcon from "@/components/ButtonIcon.vue";
 import Vue from "vue";
+import { mapActions } from "pinia/dist/pinia";
+import { useLocation } from "@/store/module/location";
+import { mapState } from "pinia";
 
 export default Vue.extend({
   data: () => ({
-    fn: null,
-    showProfile: false,
+    markers: [],
+    places: [],
+    currentPlace: null,
   }),
   name: "LayoutDefault",
   components: { NavBar, ButtonIcon },
   methods: {
-    closeDialogProfile(): void {
-      this.showProfile = false;
+    changeCenter(location) {
+      this.center.lat = location.geometry.location.lat();
+      this.center.lng = location.geometry.location.lng();
     },
-    back(): void {
-      // if (this.onClick) this.onClick();
-      // else {
-      //   if (this.$route.query.return_url) {
-      //     this.$router.push(this.$route.query.return_url as string);
-      //     return;
-      //   }
-      //
-      //   // handel period back
-      //   if (this.$route.params !== null && this.$route.params !== undefined) {
-      //     if (
-      //       this.$route.params.searchQueryPeriod !== null &&
-      //       this.$route.params.searchQueryPeriod !== undefined
-      //     ) {
-      //       this.$router.push({
-      //         name: this.backScreen,
-      //         params: {
-      //           searchQueryPeriod: this.$route.params.searchQueryPeriod,
-      //         },
-      //       });
-      //       return;
-      //     }
-      //   }
-      //   this.$router.push({
-      //     name: this.backScreen,
-      //     query: this.query,
-      //   });
-      // }
+    async getCurrentLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            console.log(position);
+          },
+          (err) => {
+            console.log(err.message);
+          }
+        );
+      } else {
+        console.log("123");
+      }
+    },
+    locationToValue(v) {
+      if (v)
+        return {
+          lat: v.geometry.location.lat(),
+          lng: v.geometry.location.lng(),
+        };
+    },
+    addMarker() {
+      if (this.currentPlace) {
+        const marker = {
+          lat: this.currentPlace.geometry.location.lat(),
+          lng: this.currentPlace.geometry.location.lng(),
+        };
+        this.markers.push({ position: marker });
+        this.places.push(this.currentPlace);
+        this.center = marker;
+        this.currentPlace = null;
+      }
+    },
+    geolocate: function () {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.center = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+      });
     },
   },
-
-  // beforeMount() {
-  //   this.fn = setInterval(() => {
-  //     if (JwtService.getToken() == null || JwtService.getToken() === "") {
-  //       window.location = SCREEN.LOGIN.PATH;
-  //     }
-  //   }, 1000);
-  // }
-
-  // beforeDestroy() {
-  //   clearInterval(this.fn);
-  // }
+  mounted() {
+    this.geolocate();
+  },
+  computed: {
+    ...mapState(useLocation, ["location", "center"]),
+  },
 });
 </script>
 

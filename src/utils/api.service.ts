@@ -12,7 +12,7 @@ const customAxios = axios.create({
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
-    Authorization: `Bearer ${JwtService.getToken()}`,
+    Authorization: `Bearer`,
   },
   timeout: 10000,
 });
@@ -32,7 +32,7 @@ customAxios.interceptors.request.use((config: any) => {
     ...config.headers,
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
-    Authorization: `Bearer ${JwtService.getToken()}`,
+    Authorization: `Bearer `,
   };
   return config;
 });

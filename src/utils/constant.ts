@@ -1,13 +1,5 @@
-export const REQUEST_MAPPING = {
-  AUTH_V1: "/api/v1/auth",
-  PRODUCT: "/api/v1/product",
-  CATEGORY: "/api/v1/category",
-  COMPANY: "/api/v1/company",
-  OWN_PROP: "/api/v1/own-properties",
-  PRODUCT_OWN_PROP: "/api/v1/product-own-properties",
-  USER: "/api/v1/user",
-  ORDER: "/api/v1/order",
-};
+export const API_END_POINT = "https://maps.googleapis.com/maps/api/geocode/json";
+export const API_KEY = "AIzaSyBkASaDd9yj5U4OR_fmS882IEmRSpjT6sQ";
 
 export const REGEX = {
   EMAIL: /^\w+([.-]?\w+)[+\d]*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
@@ -30,5 +22,46 @@ export const TYPE_USERS = [
   {
     label: "Taxi",
     value: 2,
+  },
+];
+
+export const BOOKING_TYPE = [
+  {
+    text: "Đặt ngay",
+    value: 1,
+  },
+  {
+    text: "Định kỳ",
+    value: 2,
+  },
+];
+export const REPEAT_DAY = [
+  {
+    text: "Thứ 2",
+    value: 1,
+  },
+  {
+    text: "Thứ 3",
+    value: 2,
+  },
+  {
+    text: "Thứ 4",
+    value: 3,
+  },
+  {
+    text: "Thứ 5",
+    value: 4,
+  },
+  {
+    text: "Thứ 6",
+    value: 5,
+  },
+  {
+    text: "Thứ 7",
+    value: 6,
+  },
+  {
+    text: "Chủ nhật",
+    value: 7,
   },
 ];

@@ -5,12 +5,22 @@ import vuetify from "./plugins/vuetify";
 import "@/styles/index.scss";
 import { confirm, alert } from "@/utils/utilities";
 import { createPinia, PiniaVuePlugin } from "pinia";
+import * as VueGoogleMaps from "vue2-google-maps";
+import { API_KEY } from "@/utils/constant";
 
 Vue.use(PiniaVuePlugin);
 const pinia = createPinia();
 Vue.prototype.alert = alert;
 Vue.prototype.confirm = confirm;
 
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: API_KEY,
+    libraries: "places",
+    region: "VI",
+    language: "vi",
+  },
+});
 const _vue = new Vue({
   router,
   pinia,

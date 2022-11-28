@@ -30,7 +30,7 @@ const routes = [
         path: SCREEN.HOME.PATH,
         name: SCREEN.HOME.NAME,
         component: () =>
-          import(/* webpackChunkName: "Home" */ "../views/Home.vue"),
+          import(/* webpackChunkName: "Home" */ "../views/Client/Home.vue"),
       },
       {
         name: SCREEN.ERR403.NAME,

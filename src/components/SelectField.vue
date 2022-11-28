@@ -6,7 +6,9 @@
     dense
     v-bind="$attrs"
     no-data-text="Không có data"
+    outlined
     class="selectField_data"
+    :menu-props="{ contentClass: 'mt-10 white' }"
   />
 </template>
 <script lang="ts">

@@ -4,6 +4,7 @@
     :value="value"
     v-on="$listeners"
     @input="(v) => $emit('input', v)"
+    outlined
     dense
   />
 </template>
