@@ -2,10 +2,6 @@
 import axios from "axios";
 import qs from "qs";
 import vm from "@/main";
-import JwtService from "@/utils/jwt.service";
-
-// http://3.112.223.173:8081
-// http://127.0.0.1:8081
 
 const customAxios = axios.create({
   baseURL: process.env.VUE_APP_API_URL,
@@ -18,16 +14,13 @@ const customAxios = axios.create({
 });
 customAxios.interceptors.response.use(
   (response) => {
-    vm.$store.commit(SET_LOADING, [false, true]);
     return response;
   },
   (err) => {
-    vm.$store.commit(SET_LOADING, [false, true]);
     handlerException(err);
-  }
+  },
 );
 customAxios.interceptors.request.use((config: any) => {
-  if (config.setLoading) vm.$store.commit(SET_LOADING, [true, true]);
   config.headers = {
     ...config.headers,
     "Content-Type": "application/json",
@@ -86,7 +79,7 @@ export default {
     resource: string,
     params: object,
     config = {},
-    setLoading = true
+    setLoading = true,
   ) {
     return customAxios.post(`${resource}`, params, {
       ...config,

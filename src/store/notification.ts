@@ -31,10 +31,12 @@ const defaultNoti: INoti = {
   timeout: 5000,
 };
 export type INotiNoValue = Omit<INoti, "showing">;
+
 export const useNotification = defineStore("notification", {
   state: () => ({
     confirm: defaultConfirm,
     notification: defaultNoti,
+    loading: false,
   }),
   actions: {
     setConfirm(state: Omit<IConfirm, "value">) {
@@ -53,6 +55,12 @@ export const useNotification = defineStore("notification", {
         ...state,
         showing: true,
       };
+    },
+    turnOnLoading() {
+      this.loading = true;
+    },
+    turnOffLoading() {
+      this.loading = false;
     },
   },
 });

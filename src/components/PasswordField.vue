@@ -8,6 +8,7 @@
     :type="showPassword ? 'text' : 'password'"
     :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
     @click:append="showPassword = !showPassword"
+    autocomplete="off"
   />
 </template>
 <script lang="ts">

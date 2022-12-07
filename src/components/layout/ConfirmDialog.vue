@@ -38,7 +38,7 @@
 </template>
 <script>
 import ButtonIcon from "../ButtonIcon.vue";
-import { useNotification } from "@/store/module/notification";
+import { useNotification } from "@/store/notification";
 import { mapState, mapActions } from "pinia";
 
 export default {

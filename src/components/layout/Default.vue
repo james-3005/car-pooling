@@ -10,16 +10,31 @@
             @click="() => changeCenter(location.startLocation)"
           />
           <gmap-marker
-              v-if="location.endLocation"
-              :position="locationToValue(location.endLocation)"
-              @click="() => changeCenter(location.endLocation)"
+            v-if="location.endLocation"
+            :position="locationToValue(location.endLocation)"
+            @click="() => changeCenter(location.endLocation)"
           />
-          <gmap-marker
-            :key="index"
-            v-for="(m, index) in markers"
-            :position="m.position"
-            @click="center = m.position"
-          ></gmap-marker>
+          <CurrentPosition :position="now" />
+          <!--          <gmap-polyline-->
+          <!--            v-if="location.startLocation && location.endLocation"-->
+          <!--            :path="[-->
+          <!--              locationToValue(location.startLocation),-->
+          <!--              locationToValue(location.endLocation),-->
+          <!--            ]"-->
+          <!--            v-bind:options="{ strokeColor: '#008000' }"-->
+          <!--          />-->
+          <!--          <MapElementFactory-->
+          <!--            travelMode="DRIVING"-->
+          <!--            :origin="locationToValue(location.startLocation)"-->
+          <!--            :destination="locationToValue(location.endLocation)"-->
+          <!--          />-->
+          <DrawRoutingMultipleMarker
+            travelMode="DRIVING"
+            :waypoints="[
+              locationToValue(location.startLocation),
+              locationToValue(location.endLocation),
+            ]"
+          />
         </gmap-map>
       </v-container>
     </v-main>
@@ -31,67 +46,67 @@ import NavBar from "@/components/layout/NavBar.vue";
 import ButtonIcon from "@/components/ButtonIcon.vue";
 import Vue from "vue";
 import { mapActions } from "pinia/dist/pinia";
-import { useLocation } from "@/store/module/location";
+import { useLocation } from "@/store/location";
 import { mapState } from "pinia";
+import CurrentPosition from "@/components/CurrentLocation";
+import TaxiMarker from "@/components/TaxiMarker";
+import MapElementFactory from "@/components/DrawRouting2Maker";
+import DrawRoutingMultipleMarker from "@/components/DrawRoutingMultipleMarker";
 
 export default Vue.extend({
   data: () => ({
     markers: [],
     places: [],
     currentPlace: null,
+    now: null,
   }),
   name: "LayoutDefault",
-  components: { NavBar, ButtonIcon },
+  components: {
+    TaxiMarker,
+    CurrentPosition,
+    NavBar,
+    ButtonIcon,
+    MapElementFactory,
+    DrawRoutingMultipleMarker,
+  },
   methods: {
     changeCenter(location) {
-      this.center.lat = location.geometry.location.lat();
-      this.center.lng = location.geometry.location.lng();
-    },
-    async getCurrentLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            console.log(position);
-          },
-          (err) => {
-            console.log(err.message);
-          }
-        );
-      } else {
-        console.log("123");
-      }
+      this.setCenter({
+        lat: location.lat,
+        lng: location.lng,
+      });
     },
     locationToValue(v) {
       if (v)
         return {
-          lat: v.geometry.location.lat(),
-          lng: v.geometry.location.lng(),
+          lat: v.lat,
+          lng: v.lng,
         };
-    },
-    addMarker() {
-      if (this.currentPlace) {
-        const marker = {
-          lat: this.currentPlace.geometry.location.lat(),
-          lng: this.currentPlace.geometry.location.lng(),
-        };
-        this.markers.push({ position: marker });
-        this.places.push(this.currentPlace);
-        this.center = marker;
-        this.currentPlace = null;
-      }
     },
     geolocate: function () {
-      navigator.geolocation.getCurrentPosition((position) => {
-        this.center = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-      });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.setCenter({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+          this.now = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+        },
+        () => {},
+        {
+          enableHighAccuracy: true,
+        },
+      );
     },
+    ...mapActions(useLocation, ["setCenter"]),
   },
   mounted() {
     this.geolocate();
   },
+
   computed: {
     ...mapState(useLocation, ["location", "center"]),
   },

@@ -1,17 +1,13 @@
-export const API_END_POINT = "https://maps.googleapis.com/maps/api/geocode/json";
-export const API_KEY = "AIzaSyBkASaDd9yj5U4OR_fmS882IEmRSpjT6sQ";
-
+export const API_END_POINT =
+  "https://maps.googleapis.com/maps/api/geocode/json";
+export const API_KEY = "AIzaSyDzF8TyFR1DtztfOegs8vTSv15vk4WyAX8";
+export const BASE_URL = "http://45.32.102.194:3000";
+export const SOCKET_URL = "";
 export const REGEX = {
+  USERNAME: /^[a-zA-Z0-9]+$/,
   EMAIL: /^\w+([.-]?\w+)[+\d]*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
   PHONE: /^[0-9-()]*$/,
   NUMBER: /^[0-9]*$/,
-  HTML: /<(\/?)\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[\^'">\s]+))?)+\s*|\s*)\/?>/,
-  SPECIAL_CHARACTERS: /^[a-zA-Z0-9_]+([._]?[a-zA-Z0-9_]+)*$/,
-  KATAKANA: /^([a-zA-Z0-9ァ-ン 　$&+,:;=?@#\|'<>.\-_^*()%!~\\\/`]|ー)+$/,
-  HIRAGANA: /^[a-zA-Z0-9ぁ-ん 　$&+,:;=?@#\|'<>.\-_^*()%!~\\\/`]+$/,
-  DECIMAL_NUMBER_INS: /^\d{1,5}(\.\d{0,2})?$/,
-  NEGATIVE_DECIMAL: /^[-]?([0-9]+\.?[0-9]*|\.[0-9]+)$/,
-  NOT_NEGETIVE_INTEGER: /^\d*[1-9]\d*$/,
 };
 
 export const TYPE_USERS = [
@@ -63,5 +59,15 @@ export const REPEAT_DAY = [
   {
     text: "Chủ nhật",
     value: 7,
+  },
+];
+export const GENDER_ITEMS = [
+  {
+    text: "Nam",
+    value: 1,
+  },
+  {
+    text: "Nữ",
+    value: 2,
   },
 ];
