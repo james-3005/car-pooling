@@ -3,16 +3,15 @@ import App from "./App.vue";
 import router from "./router";
 import vuetify from "./plugins/vuetify";
 import "@/styles/index.scss";
-import { confirm, alert } from "@/utils/utilities";
+import { confirm, alert, loading } from "@/utils/utilities";
 import { createPinia, PiniaVuePlugin } from "pinia";
 import * as VueGoogleMaps from "vue2-google-maps";
 import { API_KEY } from "@/utils/constant";
-
 Vue.use(PiniaVuePlugin);
 const pinia = createPinia();
 Vue.prototype.alert = alert;
 Vue.prototype.confirm = confirm;
-
+Vue.prototype.loading = loading;
 Vue.use(VueGoogleMaps, {
   load: {
     key: API_KEY,

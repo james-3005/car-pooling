@@ -13,7 +13,7 @@
 <script lang="ts">
 import Component from "vue-class-component";
 import Vue from "vue";
-import { SCREEN } from "@/utils/auth.const";
+import { SCREEN } from "@/utils/screen";
 
 @Component
 export default class Error403 extends Vue {

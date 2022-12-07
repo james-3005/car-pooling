@@ -11,13 +11,17 @@
     >
       <v-list class="py-0">
         <div class="d-flex justify-space-between align-center elevation-3">
-          <v-list-item>
+          <v-list-item class="pa-0">
             <v-list-item-icon>
               <v-icon @click="minimize = !minimize" color="primary">
                 mdi-menu
               </v-icon>
             </v-list-item-icon>
-            <v-list-item-content>Car Pooling</v-list-item-content>
+            <router-link to="/" class="text-decoration-none">
+              <v-list-item-content class="black--text font-weight-medium"
+                >Car Pooling
+              </v-list-item-content>
+            </router-link>
           </v-list-item>
           <v-menu offset-y v-if="!minimize">
             <template v-slot:activator="{ on }">
@@ -26,9 +30,16 @@
               </v-btn>
             </template>
             <v-list dense>
-              <v-list-item @click="changePassword">
-                <v-list-item-title>Thay đổi thông tin</v-list-item-title>
-              </v-list-item>
+              <router-link to="/info" class="text-decoration-none">
+                <v-list-item>
+                  <v-list-item-title>Ghép nhóm đi chung</v-list-item-title>
+                </v-list-item>
+              </router-link>
+              <router-link to="/info" class="text-decoration-none">
+                <v-list-item>
+                  <v-list-item-title>Thay đổi thông tin</v-list-item-title>
+                </v-list-item>
+              </router-link>
               <v-divider />
               <v-list-item class="logout c-pointer" @click="logOut">
                 <v-list-item-title>Đăng xuất</v-list-item-title>
@@ -47,13 +58,11 @@
 <script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
-import { MENU_HOME } from "@/utils/auth.const";
 
 @Component
 export default class NavBar extends Vue {
   drawer = true;
   minimize = false;
-  items = MENU_HOME;
   option = {
     value: false,
     disabled: false,
@@ -68,7 +77,9 @@ export default class NavBar extends Vue {
 
   async logOut(): Promise<void> {}
 
-  changePassword(): void {}
+  navigateInfo(): void {
+    this.$router.push("/info");
+  }
 }
 </script>
 <style lang="scss">

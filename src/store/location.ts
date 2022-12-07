@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { IConfirm } from "@/store/notification";
 
 export const defaultCenter = {
   lat: 21.028511,
@@ -12,4 +13,11 @@ export const useLocation = defineStore("location", {
     },
     center: defaultCenter,
   }),
+  actions: {
+    setCenter(state: { lat: number; lng: number }) {
+      this.center = {
+        ...state,
+      };
+    },
+  },
 });

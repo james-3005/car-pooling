@@ -4,3 +4,5 @@ declare module "vuetify/lib/framework" {
 }
 
 declare module "vue2-google-maps";
+declare module "vue-disable-autocomplete";
+declare module "vuetify/lib/services/goto";

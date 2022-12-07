@@ -1,16 +1,11 @@
-import { ROLE_ENUMS, SCREEN } from "@/utils/auth.const";
+import { SCREEN } from "@/utils/screen";
+import { RoleEnum } from "@/utils/types";
+
 export const USER_ROLES = {
-  [ROLE_ENUMS.ADMIN.ROLE_CODE]: {
-    NAME: ROLE_ENUMS.ADMIN.ROLE_CODE,
-    ROUTERS: [SCREEN.HOME.NAME],
-  },
+  [RoleEnum.driver]: [SCREEN.HOME.NAME, SCREEN.INFO.NAME],
+  [RoleEnum.customer]: [SCREEN.HOME.NAME, SCREEN.INFO.NAME],
 };
 
-export function checkRole(routeName: string, rolesUser: string): boolean {
-  if (!rolesUser) {
-    return false;
-  }
-  return (
-    USER_ROLES[rolesUser] && USER_ROLES[rolesUser].ROUTERS.includes(routeName)
-  );
+export function checkRole(routeName: string, rolesUser: RoleEnum): boolean {
+  return USER_ROLES[rolesUser] && USER_ROLES[rolesUser].includes(routeName);
 }

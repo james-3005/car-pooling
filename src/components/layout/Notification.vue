@@ -15,8 +15,8 @@
 </template>
 <script>
 import { mapState } from "pinia";
-import { useNotification } from "@/store/module/notification";
-import { Vue, Component} from "vue-property-decorator";
+import { useNotification } from "@/store/notification";
+import { Vue, Component } from "vue-property-decorator";
 @Component({
   computed: {
     ...mapState(useNotification, ["notification"]),

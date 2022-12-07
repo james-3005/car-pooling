@@ -17,18 +17,10 @@
 </template>
 
 <script lang="ts">
-import { MENU_HOME } from "@/utils/auth.const";
-import { Vue, Component, Prop } from "vue-property-decorator";
+import { Vue, Component } from "vue-property-decorator";
 
 @Component
-export default class Home extends Vue {
-  menus = MENU_HOME;
-  //
-  // mounted() {
-  //   // this.confirm({ content: "123123", checkAction: () => {}, title: 'Xâ' });
-  //   this.alert.success("cai lone ma");
-  // }
-}
+export default class Home extends Vue {}
 </script>
 <style lang="scss" scoped>
 .home {
