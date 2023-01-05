@@ -1,7 +1,7 @@
 export const API_END_POINT =
   "https://maps.googleapis.com/maps/api/geocode/json";
-export const API_KEY = "AIzaSyDzF8TyFR1DtztfOegs8vTSv15vk4WyAX8";
-export const BASE_URL = "http://45.32.102.194:3000";
+export const API_KEY = "AIzaSyCYULRyn6iCOxuol1nGWQQWyfgJ_SPsqJ4";
+export const BASE_URL = "http://45.32.102.194:4000";
 export const SOCKET_URL = "";
 export const REGEX = {
   USERNAME: /^[a-zA-Z0-9]+$/,
@@ -13,11 +13,11 @@ export const REGEX = {
 export const TYPE_USERS = [
   {
     label: "Khách hàng",
-    value: 1,
+    value: false,
   },
   {
     label: "Taxi",
-    value: 2,
+    value: true,
   },
 ];
 

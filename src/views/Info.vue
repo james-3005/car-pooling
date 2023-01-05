@@ -2,10 +2,17 @@
   <v-container class="gap-5 pa-5 d-flex flex-wrap" fluid>
     <p class="text-h6 mb-0">Thay đổi thông tin</p>
     <v-form class="w-100">
-      <TextField label="Họ và tên" />
+      <TextField label="Tên hiển thị" />
       <SelectField label="Giới tính" :items="GENDER_ITEMS" />
       <TextField label="Số điện thoại" />
-      <SelectField label="Vai trò" :items="TYPE_USERS" item-text="label" />
+      <v-radio-group row>
+        <v-radio
+          v-for="user in TYPE_USERS"
+          :key="user.value"
+          :label="user.label"
+          :value="user.value"
+        />
+      </v-radio-group>
       <v-row>
         <v-col>
           <v-btn color="error" block>Huỷ</v-btn>

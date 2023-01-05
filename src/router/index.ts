@@ -98,7 +98,7 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
   try {
     if (to.matched.some((record) => record.meta.requiredAuth)) {
-      const isLogged = true;
+      const isLogged = localStorage.getItem("token") || "asd";
       if (!isLogged) {
         next({
           path: SCREEN.LOGIN.PATH,

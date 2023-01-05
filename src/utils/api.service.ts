@@ -2,15 +2,15 @@
 import axios from "axios";
 import qs from "qs";
 import vm from "@/main";
+import { BASE_URL } from "@/utils/constant";
 
 const customAxios = axios.create({
-  baseURL: process.env.VUE_APP_API_URL,
+  baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
     Authorization: `Bearer`,
   },
-  timeout: 10000,
 });
 customAxios.interceptors.response.use(
   (response) => {
@@ -24,7 +24,6 @@ customAxios.interceptors.request.use((config: any) => {
   config.headers = {
     ...config.headers,
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
     Authorization: `Bearer `,
   };
   return config;
@@ -71,6 +70,12 @@ export default {
   getUsingConfig(resource: string, config = {}, setLoading = true) {
     return customAxios.get(`${resource}`, {
       ...config,
+      setLoading,
+    });
+  },
+
+  patch(resource: string, params: object, setLoading = true) {
+    return customAxios.patch(`${resource}`, params, {
       setLoading,
     });
   },

@@ -30,6 +30,7 @@ export const rules = {
     REGEX.USERNAME.test(`${v}`) ||
     "Tên đăng nhập không được chứa dấu cách và ký tự đặc biệt",
   required: (v: any) => !!v || "Đây là trường bắt buộc",
+  rePassword: (v: string, v2: string) => v === v2 || "Mật khẩu không trùng",
 };
 
 export const toLatLng = ({ lat, lng }: { lat: number; lng: number }) =>
