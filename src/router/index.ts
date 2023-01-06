@@ -22,7 +22,7 @@ const routes = [
     path: "/",
     component: () =>
       import(
-        /* webpackChunkName: "layout_default" */ "@/components/layout/Default.vue"
+        /* webpackChunkName: "layout_default" */ "@/components/layout/LayoutClient.vue"
       ),
     meta: {
       requiredAuth: true,
@@ -32,7 +32,7 @@ const routes = [
         path: SCREEN.HOME.PATH,
         name: SCREEN.HOME.NAME,
         component: () =>
-          import(/* webpackChunkName: "Home" */ "../views/Client/Home.vue"),
+          import(/* webpackChunkName: "Home" */ "../views/Client/HomePage.vue"),
       },
       {
         path: SCREEN.INFO.PATH,
