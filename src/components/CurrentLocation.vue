@@ -5,7 +5,7 @@
     :draggable="false"
     :editable="false"
     :icon="{
-      url: require('@/assets/currentLocation.png'),
+      url: require('@/assets/user-profile.png'),
       size: { width: 40, height: 40, f: 'px', b: 'px' },
       scaledSize: { width: 40, height: 40, f: 'px', b: 'px' },
     }"

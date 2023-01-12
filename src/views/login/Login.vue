@@ -1,14 +1,11 @@
 <template>
-  <div
-    class="login h-100 d-flex justify-center align-center"
-    :style="{ background: `url(${require('@/assets/bg.jpg')})` }"
-  >
+  <div class="login h-100">
     <v-card
       max-width="500"
       width="100%"
       height="100%"
       max-height="700"
-      class="login-card text-center py-10 px-2"
+      class="login-card text-center py-10 px-2 elevation-0 mt-10"
     >
       <v-tabs
         v-model="tab"
@@ -91,14 +88,20 @@
                   :value="user.value"
                 />
               </v-radio-group>
-              <v-btn color="primary" width="100%" large @click="doRegister"
-                >Đăng ký
+              <v-btn color="primary" width="100%" large @click="doRegister">
+                Đăng ký
               </v-btn>
             </v-form>
           </v-tab-item>
         </v-tabs-items>
       </v-card-text>
     </v-card>
+    <v-footer class="white">
+      <v-col class="d-flex align-center justify-center" cols="12">
+        <img src="@/assets/taxi.png" alt="" class="mr-2" />
+        {{ new Date().getFullYear() }} — <strong>RideSharing</strong>
+      </v-col>
+    </v-footer>
   </div>
 </template>
 
@@ -174,7 +177,7 @@ export default class Login extends Vue {
     input:-webkit-autofill:hover,
     input:-webkit-autofill:focus,
     input:-webkit-autofill:active {
-      -webkit-box-shadow: 0 0 0 30px #eeeeee inset !important;
+      -webkit-box-shadow: 0 0 0 30px white inset !important;
     }
   }
 }

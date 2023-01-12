@@ -43,14 +43,12 @@
 
 <script>
 import NavBar from "@/components/layout/NavBar.vue";
-import ButtonIcon from "@/components/ButtonIcon.vue";
 import Vue from "vue";
 import { mapActions } from "pinia/dist/pinia";
 import { useLocation } from "@/store/location";
 import { mapState } from "pinia";
 import CurrentPosition from "@/components/CurrentLocation";
 import TaxiMarker from "@/components/TaxiMarker";
-import MapElementFactory from "@/components/DrawRouting2Maker";
 import DrawRoutingMultipleMarker from "@/components/DrawRoutingMultipleMarker";
 
 export default Vue.extend({
@@ -65,8 +63,6 @@ export default Vue.extend({
     TaxiMarker,
     CurrentPosition,
     NavBar,
-    ButtonIcon,
-    MapElementFactory,
     DrawRoutingMultipleMarker,
   },
   methods: {

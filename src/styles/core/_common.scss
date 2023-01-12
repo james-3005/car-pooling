@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+  font-family: "Be Vietnam Pro" !important;
 }
 
 html,
@@ -39,4 +40,13 @@ body {
 }
 .p-absolute {
   position: absolute;
+}
+
+.flex-1 {
+  flex: 1;
+}
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

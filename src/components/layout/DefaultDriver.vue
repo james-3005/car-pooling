@@ -22,7 +22,6 @@
 
 <script>
 import NavBar from "@/components/layout/NavBar.vue";
-import ButtonIcon from "@/components/ButtonIcon.vue";
 import Vue from "vue";
 import { mapActions } from "pinia/dist/pinia";
 import { useLocation } from "@/store/location";
@@ -35,7 +34,7 @@ export default Vue.extend({
     currentPlace: null,
   }),
   name: "DefaultDriver",
-  components: { NavBar, ButtonIcon },
+  components: { NavBar },
   methods: {
     changeCenter(location) {
       this.setCenter({

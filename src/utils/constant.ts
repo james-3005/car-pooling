@@ -1,6 +1,6 @@
-export const API_END_POINT =
-  "https://maps.googleapis.com/maps/api/geocode/json";
-export const API_KEY = "AIzaSyCYULRyn6iCOxuol1nGWQQWyfgJ_SPsqJ4";
+export const GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
+export const AUTO_COMPLETE_URL = `https://maps.googleapis.com/maps/api/place/autocomplete/json`;
+export const API_KEY = "AIzaSyA5d0tAhfKjrWuV-MZIVgqlONRQAU8-qAE";
 export const BASE_URL = "http://45.32.102.194:4000";
 export const SOCKET_URL = "";
 export const REGEX = {

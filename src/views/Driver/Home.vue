@@ -8,25 +8,17 @@
 </template>
 
 <script>
-import TextField from "@/components/TextField.vue";
-import SelectField from "@/components/SelectField.vue";
 import { BOOKING_TYPE, REPEAT_DAY } from "@/utils/constant";
-import ButtonIcon from "@/components/ButtonIcon.vue";
 import DatePicker from "@/components/DatePicker.vue";
 import MultiSelectField from "@/components/MultiSelectField.vue";
-import LocationAutoComplete from "@/components/LocationAutoComplete.vue";
 import { mapState } from "pinia";
 import { useLocation } from "@/store/location";
 
 export default {
   name: "HomeDriver",
   components: {
-    LocationAutoComplete,
     MultiSelectField,
     DatePicker,
-    ButtonIcon,
-    SelectField,
-    TextField,
   },
   data: () => ({
     BOOKING_TYPE,

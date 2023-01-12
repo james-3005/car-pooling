@@ -40,6 +40,14 @@ const routes = [
         component: () =>
           import(/* webpackChunkName: "Home" */ "../views/Info.vue"),
       },
+      {
+        path: "/map",
+        name: "map",
+        component: () =>
+          import(
+            /* webpackChunkName: "Home" */ "../views/Client/MapHandle.vue"
+          ),
+      },
     ],
   },
   {
@@ -109,13 +117,13 @@ router.beforeEach(async (to, from, next) => {
       }
       const role = RoleEnum.customer;
 
-      if (
-        !checkRole(to.name as string, role) &&
-        SCREEN.ERR403.NAME !== to.name
-      ) {
-        next({ path: SCREEN.ERR403.PATH });
-        return;
-      }
+      // if (
+      //   !checkRole(to.name as string, role) &&
+      //   SCREEN.ERR403.NAME !== to.name
+      // ) {
+      //   next({ path: SCREEN.ERR403.PATH });
+      //   return;
+      // }
       const isDriverRoute = to.path.startsWith("/dv");
       // @ts-ignore
       if (role === RoleEnum.driver) {

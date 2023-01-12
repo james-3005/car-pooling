@@ -7,14 +7,14 @@
       <p class="text-h6 font-weight-bold mb-0">Chỉnh sửa hồ sơ</p>
     </div>
     <v-form class="mt-5 text-center">
-      <v-img src="@/assets/bg-info.svg" class="p-absolute position" />
+      <v-img src="@/assets/bg-info.svg" class="p-absolute position w-100" />
 
       <v-avatar
         color="secondary"
         size="70"
         class="my-10 elevation-4 font-weight-bold"
-        >NH</v-avatar
-      >
+        >NH
+      </v-avatar>
 
       <v-text-field label="Họ và tên" class="input" />
       <v-text-field label="Số điện thoại" class="input" />
@@ -34,12 +34,10 @@
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
-import TextField from "@/components/TextField.vue";
-import SelectField from "@/components/SelectField.vue";
 import { GENDER_ITEMS, TYPE_USERS } from "@/utils/constant";
 
 @Component({
-  components: { SelectField, TextField },
+  components: {},
 })
 export default class Info extends Vue {
   GENDER_ITEMS = GENDER_ITEMS;
@@ -53,6 +51,7 @@ export default class Info extends Vue {
       font-weight: 600;
     }
   }
+
   .position {
     bottom: 0;
     left: 0;
