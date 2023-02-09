@@ -15,34 +15,56 @@
         <p class="text-h6 font-weight-bold mb-0">Điểm đến</p>
       </div>
       <v-card
-        class="py-4 mt-4"
+        class="py-3 mt-4"
         style="  box-shadow: 0 4px 6px rgb(0 0 0 / 0.2); !important;"
-        :class="focus === 'end' ? 'border' : 'border-transparent'"
       >
         <v-text-field
           prepend-icon="mdi-account-supervisor"
           placeholder="Chọn điểm đón"
-          hide-details
-          class="mt-0 px-4"
+          class="mt-0 px-4 textfield-focus"
           v-model="startValue"
           @input="searchAutoCompleteDebounce"
           @focus="focus = 'start'"
           append-icon="mdi-crosshairs-gps"
           @click:append="selectCurrentLocation"
         />
-        <div
-          class="my-3 mr-4"
-          :class="focus === 'start' ? 'border' : 'border-transparent-start'"
-        />
+        <div class="my-3 mr-4" />
         <v-text-field
           prepend-icon="mdi-map-marker"
           placeholder="Chọn điểm đến"
-          class="textfield mt-n1 px-4"
-          hide-details
+          class="textfield mt-n1 px-4 textfield-focus"
           v-model="endValue"
           @focus="focus = 'end'"
           @input="searchAutoCompleteDebounce"
         />
+        <v-row class="mx-0 align-center row-custom">
+          <v-col>
+            <v-text-field
+              prepend-icon="mdi-clock-time-four-outline"
+              placeholder="Thời gian đón"
+              class=""
+              hide-details
+            />
+          </v-col>
+          <span class="mt-4">~</span>
+          <v-col>
+            <v-text-field placeholder="Thời gian đón" class="" hide-details />
+          </v-col>
+        </v-row>
+        <v-row class="mx-0 align-center row-custom">
+          <v-col>
+            <v-text-field
+              prepend-icon="mdi-clock-time-four-outline"
+              placeholder="Thời gian trả"
+              class=""
+              hide-details
+            />
+          </v-col>
+          <span class="mt-4">~</span>
+          <v-col>
+            <v-text-field placeholder="Thời gian trả" class="" hide-details />
+          </v-col>
+        </v-row>
       </v-card>
       <v-skeleton-loader
         class="mt-2"
@@ -164,8 +186,8 @@ export default {
     }
   }
 
-  .v-text-field > .v-input__control > .v-input__slot:before,
-  .v-text-field > .v-input__control > .v-input__slot:after {
+  .v-text-field:not(.timefield) > .v-input__control > .v-input__slot:before,
+  .v-text-field:not(.timefield) > .v-input__control > .v-input__slot:after {
     width: 0 !important;
   }
 
@@ -198,6 +220,14 @@ export default {
 
   .v-icon.mdi-crosshairs-gps {
     color: #2268af;
+  }
+
+  .row-custom:has(.v-input--is-focused) {
+    border-bottom: 2px solid #2268af !important;
+  }
+
+  .textfield-focus.v-input--is-focused {
+    border-bottom: 2px solid #2268af !important;
   }
 }
 </style>

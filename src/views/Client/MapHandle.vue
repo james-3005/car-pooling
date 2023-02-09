@@ -2,9 +2,10 @@
   <v-navigation-drawer
     :value="true"
     absolute
-    temporary
+    permanent
     bottom
-    class="map-handle"
+    class="map-handle p-relative"
+    width="100%"
   >
     <div class="h-100 d-flex flex-column">
       <gmap-map :center="center" :zoom="14" style="width: 100%; flex: 1">
@@ -57,6 +58,16 @@
         </div>
       </div>
     </div>
+    <v-btn
+      icon
+      class="p-absolute float-icon"
+      color="primary"
+      x-large
+      @click="() => (openDetail = true)"
+    >
+      <v-icon>mdi-information</v-icon>
+    </v-btn>
+    <DetailDialog :value="openDetail" :onClose="() => (openDetail = false)" />
   </v-navigation-drawer>
 </template>
 
@@ -69,6 +80,7 @@ import { mapState } from "pinia";
 import CurrentPosition from "@/components/CurrentLocation";
 import TaxiMarker from "@/components/TaxiMarker";
 import DrawRoutingMultipleMarker from "@/components/DrawRoutingMultipleMarker";
+import DetailDialog from "@/views/Client/DetailDialog";
 
 export default Vue.extend({
   data: () => ({
@@ -76,9 +88,11 @@ export default Vue.extend({
     places: [],
     currentPlace: null,
     now: null,
+    openDetail: false,
   }),
   name: "MapHandle",
   components: {
+    DetailDialog,
     TaxiMarker,
     CurrentPosition,
     NavBar,
@@ -106,8 +120,12 @@ export default Vue.extend({
   },
   mounted() {
     this.geolocate();
+    // this.confirm({
+    //   title: "Tìm thấy tài xế",
+    //   content: "Bấm để xác nhận",
+    //   checkAction: () => {},
+    // });
   },
-
   computed: {
     ...mapState(useLocation, ["location", "center"]),
   },
@@ -120,6 +138,16 @@ export default Vue.extend({
 
   .icon-success {
     color: #2268af;
+  }
+
+  .float-icon {
+    bottom: 100px;
+    right: 10px;
+  }
+
+  .gmnoprint,
+  .gm-style-cc {
+    display: none;
   }
 }
 </style>

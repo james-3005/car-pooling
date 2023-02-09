@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pa-0 h-100 d-flex flex-column layoutClient">
+  <div class="pa-0 w-100 h-100 d-flex flex-column layoutClient">
     <div class="flex-grow-1 mb-56">
       <router-view />
     </div>
@@ -30,7 +30,7 @@
         <v-icon>mdi-account</v-icon>
       </v-btn>
     </v-bottom-navigation>
-  </v-container>
+  </div>
 </template>
 
 <script>

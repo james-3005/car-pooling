@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="confirm.value" :width="width || 500">
+  <v-dialog v-model="confirm.value" :width="width || 500" persistent>
     <v-card width="500">
       <v-card-title
         class="primary white--text d-flex justify-space-between py-3"
