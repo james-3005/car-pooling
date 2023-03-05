@@ -21,8 +21,10 @@ export const register = (params: IRegister) =>
 
 export interface IChangeInfo {
   username: string;
-  password: string;
   name: string;
   is_driver: boolean;
 }
-export const changeInfo = (params: IChangeInfo) => request.patch("/users", {});
+
+// @ts-ignore
+export const changeInfo = (id?: string, params: IChangeInfo) =>
+  request.patch(`/users/${id}`, params);

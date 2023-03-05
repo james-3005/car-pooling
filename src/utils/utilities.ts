@@ -1,5 +1,6 @@
 import { IConfirm, useNotification } from "@/store/notification";
 import { REGEX } from "@/utils/constant";
+import moment from "moment";
 
 export const confirm = (confirm: Omit<IConfirm, "value">): void => {
   const { setConfirm } = useNotification();
@@ -31,6 +32,12 @@ export const rules = {
     "Tên đăng nhập không được chứa dấu cách và ký tự đặc biệt",
   required: (v: any) => !!v || "Đây là trường bắt buộc",
   rePassword: (v: string, v2: string) => v === v2 || "Mật khẩu không trùng",
+  isGreaterThanPick(pick?: number[], drop?: number[]) {
+    if (!pick || !drop) return true;
+    if (Math.min(...drop) < Math.max(...pick))
+      return "Thời gian trả phải lớn hơn thời gian đón";
+    return true;
+  },
 };
 
 export const toLatLng = ({ lat, lng }: { lat: number; lng: number }) =>
@@ -46,4 +53,37 @@ function debounce(func: Function, timeout = 300) {
       func.apply(this, args);
     }, timeout);
   };
+}
+
+export function reverse([params1, params2]: [number, number]) {
+  return [params2, params1];
+}
+
+export function toUnix(time: string) {
+  return moment(time, "HH:mm").unix();
+}
+
+export function unixToTime(time: number) {
+  return moment.unix(time).format("HH:mm");
+}
+
+export function randomNumberLatLng() {
+  const min = 0.0;
+  const max = 0.0006;
+  return Math.random() * (max - min) + min;
+}
+
+export function formattedTime(value: number) {
+  const hours = Math.floor(value / 60);
+  const minutes = value % 60;
+  return `${hours.toString().padStart(2, "0")}:${minutes
+    .toString()
+    .padStart(2, "0")}`;
+}
+
+export function removeElementAtIndex(arr: any[], index: number) {
+  if (index > -1 && index < arr.length) {
+    return [...arr.slice(0, index), ...arr.slice(index + 1)];
+  }
+  return null;
 }

@@ -13,12 +13,11 @@
 <script lang="ts">
 import Component from "vue-class-component";
 import Vue from "vue";
-import { SCREEN } from "@/utils/screen";
 
 @Component
 export default class Error403 extends Vue {
   goHome(): void {
-    this.$router.push({ name: SCREEN.HOME.NAME });
+    this.$router.push({ path: "/" });
   }
 }
 </script>

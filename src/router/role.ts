@@ -1,9 +1,8 @@
-import { SCREEN } from "@/utils/screen";
 import { RoleEnum } from "@/utils/types";
 
 export const USER_ROLES = {
-  [RoleEnum.driver]: [SCREEN.HOME.NAME, SCREEN.INFO.NAME],
-  [RoleEnum.customer]: [SCREEN.HOME.NAME, SCREEN.INFO.NAME],
+  [RoleEnum.admin]: ["HomeClient", "Info", "MapClient", "ClusterClient"],
+  [RoleEnum.customer]: ["HomeAdmin", "ClusterAdmin"],
 };
 
 export function checkRole(routeName: string, rolesUser: RoleEnum): boolean {

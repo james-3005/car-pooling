@@ -3,8 +3,8 @@
     :value="openDrawer"
     absolute
     temporary
-    bottom
     class="booking-drawer"
+    style="width: 100%"
     mobile-breakpoint="10000"
   >
     <div class="pa-3 userInfo p-relative h-100" style="background: #f3f4f6">
@@ -18,7 +18,24 @@
         class="py-3 mt-4"
         style="  box-shadow: 0 4px 6px rgb(0 0 0 / 0.2); !important;"
       >
+        <v-select
+          prepend-icon="mdi-taxi"
+          label="Loại đặt xe"
+          class="mt-0 px-4 textfield-focus"
+          v-model="form.bookingType"
+          :items="bookingTypeItems"
+        />
+        <v-select
+          v-if="isDemo"
+          prepend-icon="mdi-account-supervisor"
+          placeholder="Chọn điểm đón"
+          class="mt-0 px-4 textfield-focus"
+          v-model="startValue"
+          append-icon="mdi-crosshairs-gps"
+          :items="POI"
+        />
         <v-text-field
+          v-else
           prepend-icon="mdi-account-supervisor"
           placeholder="Chọn điểm đón"
           class="mt-0 px-4 textfield-focus"
@@ -29,7 +46,16 @@
           @click:append="selectCurrentLocation"
         />
         <div class="my-3 mr-4" />
+        <v-select
+          v-if="isDemo"
+          prepend-icon="mdi-map-marker"
+          placeholder="Chọn điểm đến"
+          class="textfield mt-n1 px-4 textfield-focus"
+          v-model="endValue"
+          :items="POI"
+        />
         <v-text-field
+          v-else
           prepend-icon="mdi-map-marker"
           placeholder="Chọn điểm đến"
           class="textfield mt-n1 px-4 textfield-focus"
@@ -39,32 +65,55 @@
         />
         <v-row class="mx-0 align-center row-custom">
           <v-col>
-            <v-text-field
+            <TimePicker
               prepend-icon="mdi-clock-time-four-outline"
               placeholder="Thời gian đón"
-              class=""
               hide-details
+              v-model="form.pickEarly"
+              @input="validateAll"
             />
           </v-col>
           <span class="mt-4">~</span>
           <v-col>
-            <v-text-field placeholder="Thời gian đón" class="" hide-details />
+            <TimePicker
+              placeholder="Thời gian đón"
+              class=""
+              hide-details
+              v-model="form.pickLate"
+              @input="validateAll"
+            />
           </v-col>
         </v-row>
         <v-row class="mx-0 align-center row-custom">
           <v-col>
-            <v-text-field
+            <TimePicker
               prepend-icon="mdi-clock-time-four-outline"
               placeholder="Thời gian trả"
               class=""
               hide-details
+              v-model="form.dropEarly"
+              @input="validateAll"
             />
           </v-col>
           <span class="mt-4">~</span>
           <v-col>
-            <v-text-field placeholder="Thời gian trả" class="" hide-details />
+            <TimePicker
+              placeholder="Thời gian trả"
+              class=""
+              hide-details
+              v-model="form.dropLate"
+              @input="validateAll"
+            />
           </v-col>
         </v-row>
+        <v-select
+          prepend-icon="mdi-package"
+          label="Diện tích"
+          class="mt-4 px-4 textfield-focus"
+          v-model="form.capacity"
+          :items="capacityItems"
+          v-if="form.bookingType === 3"
+        />
       </v-card>
       <v-skeleton-loader
         class="mt-2"
@@ -106,18 +155,34 @@ import {
 import { debounce } from "lodash";
 import { mapActions } from "pinia/dist/pinia";
 import { useLocation } from "@/store/location";
+import TimePicker from "@/components/TimePicker";
+import moment from "moment";
+import { bookingTypeItems, capacityItems, POI } from "@/utils/constant";
 
 export default {
   name: "BookingDrawer",
   props: ["openDrawer", "toggleDrawer"],
-  components: {},
+  components: { TimePicker },
   data: () => ({
+    form: {
+      pickEarly: "",
+      pickLate: "",
+      dropEarly: "",
+      dropLate: "",
+      bookingType: 1,
+      capacity: 1,
+    },
+    isDemo: false,
+    capacityItems,
+    bookingTypeItems,
     startValue: "",
     endValue: "",
     searchList: [],
     currentValue: "",
     focus: null,
     isLoadingLocation: false,
+    moment,
+    POI,
   }),
   methods: {
     searchAutoCompleteDebounce: debounce(function (str) {
@@ -143,9 +208,7 @@ export default {
 
         this.focus = null;
         this.searchList = [];
-        if (this.endValue && this.startValue) {
-          this.$router.push("/map");
-        }
+        this.validateAll();
       });
     },
     selectCurrentLocation() {
@@ -156,13 +219,33 @@ export default {
         ).then((res) => {
           this.startValue = res.data?.results[0]?.formatted_address;
           this.setLocation("start", res.data?.results[0]?.geometry?.location);
-          if (this.endValue && this.startValue) {
-            this.$router.push("/map");
-          }
+          this.validateAll();
         });
       });
     },
+    validateAll() {
+      if (
+        this.endValue &&
+        this.startValue &&
+        this.form.dropLate &&
+        this.form.dropEarly &&
+        this.form.pickEarly &&
+        this.form.pickLate
+      ) {
+        this.$router.push({
+          path: "/map",
+          query: {
+            ...this.form,
+            startValue: this.startValue,
+            endValue: this.endValue,
+          },
+        });
+      }
+    },
     ...mapActions(useLocation, ["setLocation", "setCenter", "clearLocation"]),
+  },
+  mounted() {
+    if (this.$route.query.isDemo) this.isDemo = true;
   },
   watch: {
     openDrawer(value) {

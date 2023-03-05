@@ -22,12 +22,7 @@
           />
           <ButtonIcon
             class="col-6 primary"
-            @click="
-              () => {
-                turnOffConfirm();
-                confirm.checkAction();
-              }
-            "
+            @click="check"
             icon="mdi-check"
             text="Xác nhận"
           />
@@ -70,6 +65,10 @@ export default {
   },
   methods: {
     ...mapActions(useNotification, ["turnOffConfirm"]),
+    check() {
+      this.confirm.checkAction();
+      this.turnOffConfirm();
+    },
   },
   computed: {
     ...mapState(useNotification, ["confirm"]),

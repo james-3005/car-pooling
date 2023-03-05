@@ -20,18 +20,6 @@
           </v-list>
         </v-menu>
       </div>
-      <div class="px-3 py-1 mt-4 white rounded c-pointer">
-        <v-text-field
-          prepend-icon="mdi-map-marker"
-          placeholder="Nhập điểm đến"
-          class="textfield"
-          @click="toggleDrawer"
-        />
-        <div class="d-flex gap-3">
-          <v-chip color="accent">Đặt xe nhanh</v-chip>
-          <v-chip color="accent">Chi phí rẻ</v-chip>
-        </div>
-      </div>
     </div>
     <div class="rounded-t-lg flex-grow-1 pa-4 white d-flex flex-column gap-3">
       <v-skeleton-loader v-if="loader" type="card" height="184" />
@@ -39,12 +27,10 @@
       <v-card color="#952175" dark v-if="!loader">
         <div class="d-flex flex-no-wrap justify-space-between">
           <div>
-            <v-card-title class="text-h5"
-              >Ghép nhóm &#x111;i chung
-            </v-card-title>
+            <v-card-title class="text-h5">Quản lý xe</v-card-title>
 
             <v-card-subtitle class="my-1"
-              >Dựa trên phân tích tuyến đường thường xuyên
+              >Hiển thị taxi và các tuyến đường
             </v-card-subtitle>
             <v-card-actions class="pb-4">
               <v-btn
@@ -52,7 +38,7 @@
                 outlined
                 rounded
                 small
-                @click="$router.push('/cluster')"
+                @click="$router.push('/monitor')"
               >
                 Bắt đầu
               </v-btn>
@@ -68,13 +54,21 @@
       <v-card color="#1F7087" dark v-if="!loader">
         <div class="d-flex flex-no-wrap justify-space-between">
           <div>
-            <v-card-title class="text-h5">Ship đồ</v-card-title>
+            <v-card-title class="text-h5">Quản lý nhóm</v-card-title>
 
             <v-card-subtitle class="my-1"
-              >Gửi đồ đến nơi bạn muốn
+              >Quản lý các nhóm đi chung
             </v-card-subtitle>
             <v-card-actions class="pb-4">
-              <v-btn class="ml-2" outlined rounded small> Bắt đầu</v-btn>
+              <v-btn
+                class="ml-2"
+                outlined
+                rounded
+                small
+                @click="$router.push('/cluster')"
+              >
+                Bắt đầu</v-btn
+              >
             </v-card-actions>
           </div>
 

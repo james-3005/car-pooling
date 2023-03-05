@@ -4,6 +4,7 @@
     <Notification />
     <ConfirmDialog />
     <OverlayLoading />
+    <TimeClock />
   </v-app>
 </template>
 
@@ -12,9 +13,11 @@ import { Vue, Component } from "vue-property-decorator";
 import ConfirmDialog from "@/components/layout/ConfirmDialog.vue";
 import Notification from "@/components/layout/Notification.vue";
 import OverlayLoading from "@/components/layout/OverlayLoading.vue";
+import TimeClock from "@/components/layout/TimeClock.vue";
 
 @Component({
   components: {
+    TimeClock,
     OverlayLoading,
     Notification,
     ConfirmDialog,

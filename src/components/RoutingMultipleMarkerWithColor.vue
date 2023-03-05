@@ -1,9 +1,8 @@
 <script>
 import { MapElementFactory } from "vue2-google-maps";
-import { itemColor } from "@/utils/constant";
 
 export default MapElementFactory({
-  name: "DrawRouting2Marker",
+  name: "DrawRoutingColor",
 
   ctr() {
     return google.maps.DirectionsRenderer;
@@ -16,14 +15,14 @@ export default MapElementFactory({
   props: {
     waypoints: { type: Array },
     travelMode: { type: String },
-    capacity: { type: Number },
+    color: { type: String, default: "#609EA2" },
   },
 
   afterCreate(directionsRenderer) {
     directionsRenderer.setOptions({
       suppressMarkers: true,
       polylineOptions: {
-        strokeColor: itemColor.find((item) => item.cap === this.capacity).color,
+        strokeColor: this.color,
         strokeWeight: 4,
       },
     });
@@ -45,13 +44,12 @@ export default MapElementFactory({
         },
       );
     this.$watch(
-      () => [this.waypoints, this.travelMode, this.capacity],
+      () => [this.waypoints, this.travelMode, this.color],
       () => {
         directionsRenderer.setOptions({
           suppressMarkers: true,
           polylineOptions: {
-            strokeColor: itemColor.find((item) => item.cap === this.capacity)
-              .color,
+            strokeColor: this.color,
             strokeWeight: 4,
           },
         });

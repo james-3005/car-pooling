@@ -1,11 +1,11 @@
 <template>
-  <div class="login h-100">
+  <div class="login primary h-100">
     <v-card
       max-width="500"
       width="100%"
-      height="100%"
+      height="600"
       max-height="700"
-      class="login-card text-center py-10 px-2 elevation-0 mt-10"
+      class="login-card text-center py-10 px-2 elevation-0 mt-10 mx-auto"
     >
       <v-tabs
         v-model="tab"
@@ -96,9 +96,9 @@
         </v-tabs-items>
       </v-card-text>
     </v-card>
-    <v-footer class="white">
+    <v-footer class="primary white--text pt-4">
       <v-col class="d-flex align-center justify-center" cols="12">
-        <img src="@/assets/taxi.png" alt="" class="mr-2" />
+        <img src="@/assets/taxi.png" alt="" class="mr-2" style="width: 20px" />
         {{ new Date().getFullYear() }} — <strong>RideSharing</strong>
       </v-col>
     </v-footer>
@@ -165,7 +165,7 @@ export default class Login extends Vue {
   background-repeat: no-repeat !important;
 
   &-card {
-    background-color: #ffffffe8 !important;
+    background-color: white !important;
 
     .v-tabs-items {
       background-color: transparent !important;
@@ -177,7 +177,8 @@ export default class Login extends Vue {
     input:-webkit-autofill:hover,
     input:-webkit-autofill:focus,
     input:-webkit-autofill:active {
-      -webkit-box-shadow: 0 0 0 30px white inset !important;
+      background: #ffffffe8;
+      -webkit-box-shadow: 0 0 0 30px #ffffffe8 inset !important;
     }
   }
 }

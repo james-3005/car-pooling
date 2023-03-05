@@ -1,40 +1,92 @@
 <template>
-  <div class="pa-4 userInfo p-relative h-100">
-    <div class="d-flex align-center">
+  <div class="userInfo p-relative h-100 d-flex flex-column">
+    <div class="d-flex align-center pa-4">
       <v-btn icon plain raised rounded class="mr-2">
         <v-icon color="black" @click="$router.push('/')">mdi-arrow-left</v-icon>
       </v-btn>
       <p class="text-h6 font-weight-bold mb-0">Chỉnh sửa hồ sơ</p>
     </div>
-    <v-form class="mt-5 text-center">
-      <v-img src="@/assets/bg-info.svg" class="p-absolute position w-100" />
+    <v-tabs
+      v-model="tab"
+      grow
+      class="mx-auto text-center w-75 pt-4"
+      color="primary"
+      background-color="transparent"
+      slider-color="primary"
+    >
+      <v-tab key="info">
+        <h3>Đổi thông tin</h3>
+      </v-tab>
+      <v-tab key="password">
+        <h3>Đổi mật khẩu</h3>
+      </v-tab>
+    </v-tabs>
+    <v-tabs-items v-model="tab" class="">
+      <v-tab-item key="info" class="pa-4">
+        <v-form class="mt-5 text-center">
+          <v-img src="@/assets/bg-info.svg" class="p-absolute position w-100" />
+          <v-avatar
+            color="secondary"
+            size="70"
+            class="my-10 elevation-4 font-weight-bold text-uppercase"
+            >{{ userName[0] }}
+          </v-avatar>
 
-      <v-avatar
-        color="secondary"
-        size="70"
-        class="my-10 elevation-4 font-weight-bold"
-        >NH
-      </v-avatar>
+          <v-text-field
+            label="Username"
+            class="input"
+            v-model="user.username"
+          />
+          <v-text-field
+            label="Tên hiển thị"
+            class="input"
+            v-model="user.name"
+          />
+          <v-radio-group row v-model="user.is_driver">
+            <v-radio
+              v-for="item in TYPE_USERS"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </v-radio-group>
+          <v-btn color="primary" block height="50" @click="updateInfo"
+            >Cập nhật
+          </v-btn>
+        </v-form>
+      </v-tab-item>
+      <v-tab-item key="password" class="pa-4">
+        <v-form class="mt-5 text-center">
+          <v-img src="@/assets/bg-info.svg" class="p-absolute position w-100" />
 
-      <v-text-field label="Họ và tên" class="input" />
-      <v-text-field label="Số điện thoại" class="input" />
-      <v-select label="Giới tính" :items="GENDER_ITEMS" class="input" />
-      <v-radio-group row>
-        <v-radio
-          v-for="user in TYPE_USERS"
-          :key="user.value"
-          :label="user.label"
-          :value="user.value"
-        />
-      </v-radio-group>
-      <v-btn color="primary" block height="50">Cập nhật</v-btn>
-    </v-form>
+          <v-text-field
+            label="Mật khẩu cũ"
+            class="input"
+            v-model="form.oldPw"
+          />
+          <v-text-field
+            label="Mật khẩu mới"
+            class="input"
+            v-model="form.newPw"
+          />
+          <v-text-field
+            label="Nhập lại mật khẩu mới"
+            class="input"
+            v-model="form.reNewPw"
+          />
+          <v-btn color="primary" block height="50" @click="updatePassword"
+            >Cập nhật
+          </v-btn>
+        </v-form>
+      </v-tab-item>
+    </v-tabs-items>
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { Vue, Component } from "vue-property-decorator";
 import { GENDER_ITEMS, TYPE_USERS } from "@/utils/constant";
+import { changeInfo } from "@/services/auth";
 
 @Component({
   components: {},
@@ -42,6 +94,30 @@ import { GENDER_ITEMS, TYPE_USERS } from "@/utils/constant";
 export default class Info extends Vue {
   GENDER_ITEMS = GENDER_ITEMS;
   TYPE_USERS = TYPE_USERS;
+  user = JSON.parse(localStorage.getItem("user"));
+  userName = JSON.parse(localStorage.getItem("user")).name;
+  tab = "info";
+  form = {
+    oldPw: "",
+    newPw: "",
+    reNewPw: "",
+  };
+
+  async updateInfo() {
+    try {
+      this.loading(true);
+      await changeInfo(this.user._id, this.user);
+      this.alert.success("Cập nhật thành công, vui lòng đăng nhập lại");
+      localStorage.removeItem("token");
+      this.$router.push("/login");
+    } catch (e) {
+      this.alert.error("Cập nhật thất bại");
+    } finally {
+      this.loading(false);
+    }
+  }
+
+  async updatePassword() {}
 }
 </script>
 <style lang="scss">

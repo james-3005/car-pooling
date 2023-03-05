@@ -14,7 +14,7 @@
     <template v-slot:activator="{ on, attrs }">
       <div :style="width && `width: ${width}`">
         <v-text-field
-          :value="value ? moment(value).format('YYYY年MM月DD日') : ''"
+          :value="value"
           append-icon="mdi-calendar"
           @click:append="if (!$attrs.readonly) isShow = true;"
           outlined
@@ -32,7 +32,6 @@
     </template>
     <v-date-picker
       scrollable
-      locale="ja"
       no-title
       :value="value"
       @input="setDate"
@@ -46,6 +45,7 @@
 
 <script>
 import moment from "moment";
+
 export default {
   components: {},
   props: {

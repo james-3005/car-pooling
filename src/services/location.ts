@@ -1,5 +1,6 @@
 import { API_KEY, AUTO_COMPLETE_URL, GEOCODE_URL } from "@/utils/constant";
 import axios from "axios";
+import request from "@/utils/api.service";
 
 export const GET_ADDRESS_FROM_LATLNG = (lat: number, long: number) =>
   axios.get(GEOCODE_URL, {
@@ -23,3 +24,16 @@ export const GET_LATLNG_FROM_ADDRESS = (address: string) =>
       key: API_KEY,
     },
   });
+
+interface createParams {
+  t: number;
+  o: number;
+  d: number;
+  wp: [number, number];
+  wd: [number, number];
+}
+
+export const ONLINE_BOOKING = (params: createParams) =>
+  request.post("/ride-requests", params);
+
+export const GET_TAXI_LIST = () => request.get("/taxis");

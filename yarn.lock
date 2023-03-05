@@ -1128,6 +1128,11 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
+"@types/google.maps@^3.51.1":
+  version "3.51.1"
+  resolved "https://registry.yarnpkg.com/@types/google.maps/-/google.maps-3.51.1.tgz#7cd2007d231d49b9642d84e752d25f41827f7c2b"
+  integrity sha512-Wtl6PUL26jEbC1NBqJi7uoyYZo1/I3EDCd9pZk9EN6ZDvKaO28M5+nIQGyYomzvkMpMHnfywpTzalhwr76/oAg==
+
 "@types/http-proxy@^1.17.5":
   version "1.17.9"
   resolved "https://registry.yarnpkg.com/@types/http-proxy/-/http-proxy-1.17.9.tgz#7f0e7931343761efde1e2bf48c40f02f3f75705a"
@@ -6486,10 +6491,10 @@ mixin-deep@^1.2.0:
   dependencies:
     minimist "^1.2.6"
 
-moment@^2.29.3:
-  version "2.29.3"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.3.tgz#edd47411c322413999f7a5940d526de183c031f3"
-  integrity sha512-c6YRvhEo//6T2Jz/vVtYzqBzwvPT95JBQ+smCytzf7c50oMZRsR/a4w88aD34I+/QVSfnoAnSBFPJHItlOMJVw==
+moment@^2.29.4:
+  version "2.29.4"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
+  integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -9758,7 +9763,7 @@ vuetify-loader@^1.7.0:
     file-loader "^6.2.0"
     loader-utils "^2.0.0"
 
-vuetify@^2.6.5:
+vuetify@2.6.5:
   version "2.6.5"
   resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-2.6.5.tgz#9db2a6660427ca34d5555c45934eaa151f74314d"
   integrity sha512-3T7huTujf33PLPgVhUY1y+8YD7K6d8qsk3UGcG6RL6qWc7QcUDczLcri0KNXeX2BeyESXMFhU0jwiNbMbNX+Tg==
