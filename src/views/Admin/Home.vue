@@ -297,9 +297,9 @@ export default {
       GET_TAXI_LIST().then((res) => {
         this.loading(false);
         this.locations = res.data;
-        if (taxiId) {
-          this.selectTaxi = taxiId;
-        }
+        // if (taxiId) {
+        //   this.selectTaxi = taxiId;
+        // }
       });
     },
     async getCursorPosition(type) {
