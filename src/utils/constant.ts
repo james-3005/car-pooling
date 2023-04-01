@@ -8,16 +8,19 @@ export const REGEX = {
   EMAIL: /^\w+([.-]?\w+)[+\d]*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
   PHONE: /^[0-9-()]*$/,
   NUMBER: /^[0-9]*$/,
+  PLATES: /^[A-HK-LOhklo][0-9][A-Z][0-9]{2,3}[A-Z0-9]$/,
 };
 
 export const TYPE_USERS = [
   {
-    label: "Khách hàng",
+    label: "Customer",
     value: false,
+    disabled: false,
   },
   {
-    label: "Taxi",
+    label: "Taxi driver",
     value: true,
+    disabled: true,
   },
 ];
 
@@ -94,18 +97,44 @@ export const itemColor = [
 ];
 export const HEADER_CLUSTER_SMALL = [
   {
+    text: "ID",
+    value: "index",
+    sortable: false,
+    width: 20,
+  },
+  {
+    text: "Name",
+    value: "name",
+    sortable: false,
+  },
+  {
+    text: "Phone",
+    value: "phone",
+    sortable: false,
+  },
+  {
+    text: " ",
+    value: "action",
+    sortable: false,
+  },
+];
+export const HEADER_CLUSTER = [
+  {
     text: "STT",
     value: "index",
     sortable: false,
     width: 20,
   },
   {
-    text: "Nguời dùng",
+    text: "Name",
     value: "name",
     sortable: false,
   },
-  { text: "Số điện thoại", value: "phone", sortable: false },
-  { text: " ", value: "action" },
+  {
+    text: "Phone",
+    value: "phone",
+    sortable: false,
+  },
 ];
 export const bookingTypeItems = [
   {
@@ -128,12 +157,6 @@ export enum FilterEnum {
   Taxi,
   Schedule,
 }
-
-export const filterOptions = [
-  { text: "Hiển thị tất cả", value: FilterEnum.ALL },
-  { text: "Hiển thị chỉ taxi", value: FilterEnum.Taxi },
-  { text: "Hiển thị chỉ lịch trinh", value: FilterEnum.Schedule },
-];
 
 export const POI = [
   { text: "Tòa nhà IDMC Mỹ Đình 2", value: "IDMC_TTT" },
@@ -179,22 +202,15 @@ export const POI = [
 ];
 
 export const formCreateRideRequest = {
-  userId: null,
-  wp: ["", ""],
-  wd: ["", ""],
-  start: "",
-  destination: "",
-};
-
-export const formCreateTaxi = {
-  position: null,
-  name: "",
-  positionName: "",
+  wp: "",
+  wd: "",
+  pickup: "",
+  dropoff: "",
 };
 
 export const formCreateRequestUser = {
-  wp: ["", ""],
-  wd: ["", ""],
+  wp: "",
+  wd: "",
   start: "",
   startName: "",
   destination: "",

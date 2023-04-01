@@ -9,7 +9,7 @@ const customAxios = axios.create({
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
-    Authorization: `Bearer`,
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
   },
 });
 customAxios.interceptors.response.use(
@@ -24,7 +24,7 @@ customAxios.interceptors.request.use((config: any) => {
   config.headers = {
     ...config.headers,
     "Content-Type": "application/json",
-    Authorization: `Bearer `,
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
   };
   return config;
 });

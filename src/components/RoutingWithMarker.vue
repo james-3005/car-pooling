@@ -1,10 +1,10 @@
 <template>
   <div>
     <DrawRoutingMultipleMarker
-      v-if="filter !== 1"
       travelMode="DRIVING"
       :waypoints="waypoints"
       :capacity="capacity"
+      v-if="waypoints.length"
     />
     <gmap-info-window
       :position="marker.infoWindowPos"
@@ -12,17 +12,27 @@
       @closeclick="marker.infoWinOpen = false"
     >
       <div>
-        <h6 class="d-flex align-center gap-1">
+        <h4 class="d-flex align-center gap-1 text-h6">
           <img src="@/assets/stopwatch.png" alt="" style="height: 20px" />
-          Khoảng thời gian trả
-        </h6>
-        <div class="d-flex gap-2 mt-2 text-caption">
-          {{ marker.time }}
+          Timeline
+        </h4>
+        <div class="mt-2 text-subtitle-1">
+          <h5
+            class="d-block"
+            v-if="
+              !!listValidUser &&
+              !!listValidUser.find((user) => user.value === marker.userId)
+            "
+          >
+            {{
+              listValidUser.find((user) => user.value === marker.userId).text
+            }}
+          </h5>
+          <h5>{{ marker.time }}</h5>
         </div>
       </div>
     </gmap-info-window>
     <gmap-marker
-      v-if="filter !== 1"
       v-for="(item, key) in waypoints"
       :key="key"
       :position="item"
@@ -34,23 +44,40 @@
       @click="() => toggleInfoWindow(item, key)"
     />
     <TaxiMarker
-      v-if="filter !== 2"
       :position="taxiPosition"
       :click="() => toggleInfoWindowTaxi(taxiPosition, taxiName, info._id)"
     />
     <gmap-info-window :position="taxi.infoWindowPos" :opened="taxi.infoWinOpen">
       <div>
-        <h6 class="d-flex align-center gap-1">
+        <h5 class="d-flex align-center gap-1 text-h6">
           <img src="@/assets/taxi-driver.png" alt="" style="height: 20px" />
-          {{ taxi.name }}
-        </h6>
-        <v-btn color="primary" x-small block class="mt-2"
-          >Hiển thị mỗi taxi này
+          {{ info.driver_name }} - {{ info.license_plate }}
+        </h5>
+        <h5
+          v-if="info.s.total_vnd"
+          class="mt-2 success--text text-subtitle-1 font-weight-bold"
+        >
+          {{ formatCurrency(info.s.total_vnd) }} -
+          {{ info.s.total_kilometers + " Km" }}
+        </h5>
+        <v-btn
+          color="primary"
+          x-small
+          block
+          class="mt-2"
+          @click="() => $emit('filterTaxi', info._id)"
+          v-if="!hideAction"
+          >Show only this Schedule
         </v-btn>
-        <div class="d-flex gap-2 mt-2">
-          <v-btn color="error" x-small>Xoá taxi</v-btn>
-          <v-btn color="error" x-small>Xoá lịch trình</v-btn>
-        </div>
+        <v-btn
+          v-if="!hideAction"
+          color="error"
+          x-small
+          block
+          class="mt-2"
+          @click="() => $emit('clearSchedule', info._id)"
+          >Clear Schedule
+        </v-btn>
       </div>
     </gmap-info-window>
   </div>
@@ -59,14 +86,14 @@
 <script>
 import DrawRoutingMultipleMarker from "@/components/DrawRoutingMultipleMarker";
 import TaxiMarker from "@/components/TaxiMarker";
-import { randomNumberLatLng, unixToTime } from "@/utils/utilities";
+import { formatCurrency, unixToTime } from "@/utils/utilities";
 
 export default {
   components: {
     TaxiMarker,
     DrawRoutingMultipleMarker,
   },
-  props: ["info", "filter"],
+  props: ["info", "hideAction", "listValidUser"],
   name: "RoutingWithMarker",
   inheritAttrs: true,
   data: () => ({
@@ -85,6 +112,7 @@ export default {
   }),
   methods: {
     toggleInfoWindow: function (marker, idx) {
+      this.marker.userId = marker.userId;
       this.marker.infoWindowPos = marker;
       this.marker.time = `${marker.firstTime}-${marker.lastTime}`;
       if (this.marker.currentMidx === idx) {
@@ -104,14 +132,16 @@ export default {
         this.taxi.currentMidx = idx;
       }
     },
+    formatCurrency,
   },
   computed: {
     waypoints() {
       return this.info.s.nodes.map((item) => ({
-        lat: item.p[0] + randomNumberLatLng(),
-        lng: item.p[1] + randomNumberLatLng(),
+        lat: item.p[0],
+        lng: item.p[1],
         firstTime: unixToTime(item.wp[0]),
         lastTime: unixToTime(item.wp[1]),
+        userId: item.user_id,
       }));
     },
     capacity() {
@@ -119,8 +149,8 @@ export default {
     },
     taxiPosition() {
       return {
-        lat: this.info.l[0] + randomNumberLatLng(),
-        lng: this.info.l[1] + randomNumberLatLng(),
+        lat: this.info.l[0],
+        lng: this.info.l[1],
       };
     },
     taxiName() {

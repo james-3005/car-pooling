@@ -28,3 +28,5 @@ export interface IChangeInfo {
 // @ts-ignore
 export const changeInfo = (id?: string, params: IChangeInfo) =>
   request.patch(`/users/${id}`, params);
+
+export const getAllUser = () => request.get("/users");

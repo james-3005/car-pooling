@@ -5,17 +5,17 @@
   >
     <div class="pa-4">
       <div class="d-flex justify-space-between">
-        <p class="text-subtitle-1 white--text">Chào {{ user }}!</p>
+        <p class="text-subtitle-1 white--text">Hi {{ user }}!</p>
         <v-menu>
           <template v-slot:activator="{ on, attrs }">
             <v-chip color="primary" v-bind="attrs" v-on="on">
-              Quản lý
+              Manage
               <v-icon size="small" class="ml-2">mdi-account-circle</v-icon>
             </v-chip>
           </template>
           <v-list class="pa-0">
             <v-list-item class="c-pointer" @click="logout">
-              <v-list-item-title>Đăng xuất</v-list-item-title>
+              <v-list-item-title>Logout</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -27,10 +27,10 @@
       <v-card color="#952175" dark v-if="!loader">
         <div class="d-flex flex-no-wrap justify-space-between">
           <div>
-            <v-card-title class="text-h5">Quản lý xe</v-card-title>
+            <v-card-title class="text-h5">Monitoring</v-card-title>
 
             <v-card-subtitle class="my-1"
-              >Hiển thị taxi và các tuyến đường
+              >Show taxi and schedule
             </v-card-subtitle>
             <v-card-actions class="pb-4">
               <v-btn
@@ -38,9 +38,9 @@
                 outlined
                 rounded
                 small
-                @click="$router.push('/monitor')"
+                @click="$router.push('admin/monitor')"
               >
-                Bắt đầu
+                Start
               </v-btn>
             </v-card-actions>
           </div>
@@ -54,11 +54,9 @@
       <v-card color="#1F7087" dark v-if="!loader">
         <div class="d-flex flex-no-wrap justify-space-between">
           <div>
-            <v-card-title class="text-h5">Quản lý nhóm</v-card-title>
+            <v-card-title class="text-h5">Groups</v-card-title>
 
-            <v-card-subtitle class="my-1"
-              >Quản lý các nhóm đi chung
-            </v-card-subtitle>
+            <v-card-subtitle class="my-1">Group user </v-card-subtitle>
             <v-card-actions class="pb-4">
               <v-btn
                 class="ml-2"
@@ -67,7 +65,7 @@
                 small
                 @click="$router.push('/cluster')"
               >
-                Bắt đầu</v-btn
+                Start</v-btn
               >
             </v-card-actions>
           </div>

@@ -41,10 +41,28 @@ export interface ICreateMovementMany {
 export const createMovementMany = (params: ICreateMovementMany) =>
   request.post("movements/many", params);
 
-interface ICreatePatternMany {
+export interface ICreatePatternMany {
   hour_start: number;
   list: IListLocation[];
 }
 
 export const createPatternMany = (params: ICreatePatternMany) =>
   request.post("patterns/many", params);
+
+interface IParams {
+  size: number;
+  opts: {
+    hourId: number;
+    maxDistance: number;
+    minDuration: number;
+    minWeight: number;
+  };
+}
+
+export const getCluster = (params: IParams, algo = "agp") =>
+  request.post(`clustering/${algo}`, params);
+
+export const frequentClear = () => request.delete("patterns/clear");
+
+export const buildPattern = (id: string, params: any) =>
+  request.post(`patterns/${id}`, params);

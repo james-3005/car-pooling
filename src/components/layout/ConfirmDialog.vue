@@ -18,13 +18,13 @@
               }
             "
             icon="mdi-close"
-            text="Huỷ"
+            text="Cancel"
           />
           <ButtonIcon
             class="col-6 primary"
             @click="check"
             icon="mdi-check"
-            text="Xác nhận"
+            text="OK"
           />
         </div>
       </v-card-actions>

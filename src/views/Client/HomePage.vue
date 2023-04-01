@@ -4,18 +4,41 @@
     style="background-color: #085da0"
   >
     <div class="pa-4">
-      <div class="d-flex justify-space-between">
-        <p class="text-subtitle-1 white--text">Chào {{ user }}!</p>
+      <div class="d-flex gap-2">
+        <p class="text-subtitle-1 white--text">Hi {{ user }}!</p>
+        <v-menu>
+          <template v-slot:activator="{ on, attrs }">
+            <v-badge dot color="error" content="6" class="ml-auto mr-2">
+              <v-btn icon small v-bind="attrs" v-on="on">
+                <v-icon color="white">mdi-bell</v-icon>
+              </v-btn>
+            </v-badge>
+          </template>
+          <v-list class="pa-0">
+            <v-list-item class="c-pointer">
+              <v-list-item-avatar>
+                <v-icon color="primary">mdi mdi-account-multiple</v-icon>
+              </v-list-item-avatar>
+              <v-list-item-content
+                >The system has suggested you a group to go together.<br />
+                <span class="success--text" @click="$router.push('/cluster')"
+                  >Click to see details</span
+                >
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
         <v-menu>
           <template v-slot:activator="{ on, attrs }">
             <v-chip color="primary" v-bind="attrs" v-on="on">
-              Quản lý
+              Manage
               <v-icon size="small" class="ml-2">mdi-account-circle</v-icon>
             </v-chip>
           </template>
           <v-list class="pa-0">
             <v-list-item class="c-pointer" @click="logout">
-              <v-list-item-title>Đăng xuất</v-list-item-title>
+              <v-list-item-title>Logout</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -23,13 +46,13 @@
       <div class="px-3 py-1 mt-4 white rounded c-pointer">
         <v-text-field
           prepend-icon="mdi-map-marker"
-          placeholder="Nhập điểm đến"
+          placeholder="Input destination"
           class="textfield"
           @click="toggleDrawer"
         />
         <div class="d-flex gap-3">
-          <v-chip color="accent">Đặt xe nhanh</v-chip>
-          <v-chip color="accent">Chi phí rẻ</v-chip>
+          <v-chip color="accent">Ride request</v-chip>
+          <v-chip color="accent">Car pooling</v-chip>
         </div>
       </div>
     </div>
@@ -39,12 +62,10 @@
       <v-card color="#952175" dark v-if="!loader">
         <div class="d-flex flex-no-wrap justify-space-between">
           <div>
-            <v-card-title class="text-h5"
-              >Ghép nhóm &#x111;i chung
-            </v-card-title>
+            <v-card-title class="text-h5">Group</v-card-title>
 
             <v-card-subtitle class="my-1"
-              >Dựa trên phân tích tuyến đường thường xuyên
+              >Based on frequent route analysis
             </v-card-subtitle>
             <v-card-actions class="pb-4">
               <v-btn
@@ -54,32 +75,13 @@
                 small
                 @click="$router.push('/cluster')"
               >
-                Bắt đầu
+                Start
               </v-btn>
             </v-card-actions>
           </div>
 
           <v-avatar class="ma-3" size="125" tile>
             <v-img src="@/assets/grouping.svg" />
-          </v-avatar>
-        </div>
-      </v-card>
-
-      <v-card color="#1F7087" dark v-if="!loader">
-        <div class="d-flex flex-no-wrap justify-space-between">
-          <div>
-            <v-card-title class="text-h5">Ship đồ</v-card-title>
-
-            <v-card-subtitle class="my-1"
-              >Gửi đồ đến nơi bạn muốn
-            </v-card-subtitle>
-            <v-card-actions class="pb-4">
-              <v-btn class="ml-2" outlined rounded small> Bắt đầu</v-btn>
-            </v-card-actions>
-          </div>
-
-          <v-avatar class="ma-3" size="125" tile>
-            <v-img src="@/assets/deliver.svg" />
           </v-avatar>
         </div>
       </v-card>

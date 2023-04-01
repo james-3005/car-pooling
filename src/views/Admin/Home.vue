@@ -9,10 +9,12 @@
       >
         <RoutingWithMarker
           v-if="locations"
-          v-for="item in locations"
-          :key="locations._id"
+          v-for="(item, index) in filteredTaxi"
+          :key="index + 'schedule'"
           :info="item"
-          :filter="filter"
+          @clearSchedule="clearScheduleTaxi"
+          @filterTaxi="(id) => (selectTaxi = id)"
+          :listValidUser="listValidUser"
         />
         <GmapInfoWindow />
         <gmap-marker
@@ -40,7 +42,7 @@
         <Instruction />
       </div>
     </div>
-    <div class="white elevation-5 pa-2 overflow-auto" style="width: 400px">
+    <div class="white elevation-5 pa-2 overflow-auto" style="width: 550px">
       <v-tabs
         v-model="tab"
         grow
@@ -50,96 +52,78 @@
         slider-color="primary"
       >
         <v-tab key="init">
-          <h6>Tạo</h6>
+          <h6>Create Realtime</h6>
         </v-tab>
         <v-tab key="monitor">
-          <h6>Monitoring</h6>
+          <h6>Monitoring Realtime</h6>
         </v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item key="init" class="pa-4">
-          <template v-if="isDemo">
-            <h6 class="mb-2">1. Tạo taxi</h6>
-            <v-form ref="formCreateTaxiRef">
-              <v-text-field
-                label="Vị trí"
-                readonly
-                :value="formCreateTaxi.positionName"
-                append-icon="mdi-crosshairs-gps"
-                @click:append="getCursorPosition"
-                :rules="[rules.required]"
-              />
-              <v-text-field
-                label="Tên taxi"
-                v-model="formCreateTaxi.name"
-                :rules="[rules.required]"
-              />
-              <v-btn class="ma-2" small @click="resetFormCreateTaxi">
-                <v-icon small>mdi-backup-restore</v-icon>
-                Đặt lại
-              </v-btn>
-              <v-btn color="primary" small class="ma-2">
-                <v-icon small>mdi-plus</v-icon>
-                Tạo taxi
-              </v-btn>
-            </v-form>
-          </template>
           <template>
-            <h6 class="mb-2">{{ isDemo ? 2 : 1 }}. Tạo request</h6>
+            <h6 class="mb-2">1. Create realtime request</h6>
             <v-form ref="formCreateRequestRef">
-              <v-select label="Người dùng" />
+              <v-select
+                label="User"
+                :items="listValidUser.filter((item) => !item.ride_request_id)"
+                v-model="formCreateRequest.owner"
+                :rules="[rules.required]"
+                item-text="name"
+                item-value="_id"
+              />
               <v-text-field
-                label="Điểm đón"
+                label="Pick up position"
                 readonly
-                :value="formCreateTaxi.positionName"
+                :value="formCreateRequest.pickup"
                 append-icon="mdi-crosshairs-gps"
-                @click:append="getCursorPosition"
+                @click:append="() => getCursorPosition('pickup')"
                 :rules="[rules.required]"
               />
               <v-text-field
-                label="Điểm trả"
+                label="Drop off position"
                 readonly
-                :value="formCreateTaxi.positionName"
+                :value="formCreateRequest.dropoff"
                 append-icon="mdi-crosshairs-gps"
-                @click:append="getCursorPosition"
+                @click:append="() => getCursorPosition('dropoff')"
                 :rules="[rules.required]"
               />
-              <v-subheader>Khoảng thời gian đón</v-subheader>
-              <v-range-slider
+              <v-subheader>Pick up time (expect)</v-subheader>
+              <v-slider
                 :min="0"
-                :max="1440"
+                :max="1430"
                 :step="5"
                 ticks-labels
                 tick-size="3"
                 thumb-label="always"
-                v-model="formCreateRequest.wp"
+                v-model="formCreateRequest.wpn"
                 :rules="[rules.required]"
               >
                 <template #thumb-label="{ value }">
                   {{ formattedTime(value) }}
                 </template>
-              </v-range-slider>
-              <v-subheader>Khoảng thời gian trả</v-subheader>
-              <v-range-slider
+              </v-slider>
+              <v-subheader>Drop off time (expect)</v-subheader>
+              <v-slider
                 :min="0"
-                :max="1440"
+                :max="1430"
                 :step="5"
                 thumb-label="always"
                 ticks-labels
                 tick-size="3"
-                v-model="formCreateRequest.wd"
+                v-model="formCreateRequest.wdn"
                 :rules="[
                   rules.required,
-                  (drop) => rules.isGreaterThanPick(formCreateRequest.wp, drop),
+                  (drop) =>
+                    rules.isGreaterThanPick(formCreateRequest.wpn, drop),
                 ]"
               >
                 <template #thumb-label="{ value }">
                   {{ formattedTime(value) }}
                 </template>
-              </v-range-slider>
+              </v-slider>
               <v-btn class="ma-2" small @click="resetFormCreateRequest">
                 <v-icon small>mdi-backup-restore</v-icon>
-                Đặt lại
+                Reset form
               </v-btn>
               <v-btn
                 class="ma-2"
@@ -148,16 +132,48 @@
                 @click="createRideRequest"
               >
                 <v-icon small>mdi-plus</v-icon>
-                Tạo request
+                Create request
               </v-btn>
             </v-form>
           </template>
-          <template v-if="isDemo">
-            <h6 class="mb-2">3. Khác (chỉ dành cho kiểm thử)</h6>
-            <v-btn color="error" small class="mr-2">Xoá hết lịch trình</v-btn>
-            <v-btn color="error" small class="mr-2">Xoá hết taxi</v-btn>
-            <v-btn color="info" class="mt-2" small @click="showGrid = !showGrid"
-              >Hiển thị lưới
+          <template>
+            <h6 class="text-uppercase red--text">2. Other (Only for demo)</h6>
+            <v-btn
+              color="primary"
+              class="mt-2"
+              block
+              small
+              @click="importFileMovement"
+            >
+              <input
+                type="file"
+                ref="fileInput2"
+                style="display: none"
+                accept="application/json"
+                @change="onFileChange"
+              />
+              <v-icon small>mdi-file</v-icon>
+              Import schedule
+            </v-btn>
+            <v-btn
+              color="error"
+              small
+              block
+              class="mt-2"
+              @click="clearAllScheduleTaxi"
+            >
+              <v-icon small>mdi-delete</v-icon>
+              Clear all schedule
+            </v-btn>
+            <v-btn
+              color="info"
+              class="mt-2"
+              block
+              small
+              @click="showGrid = !showGrid"
+            >
+              <v-icon small>mdi-table</v-icon>
+              Show grid
             </v-btn>
           </template>
         </v-tab-item>
@@ -166,52 +182,71 @@
             <v-col>
               <v-select
                 prepend-inner-icon="mdi-filter"
-                label="Loại hiển thị"
-                :items="filterOptions"
-                v-model="filter"
-              />
-              <v-select
-                prepend-inner-icon="mdi-filter"
-                label="Hiển thị taxi"
-                :items="[]"
-                v-model="filterTaxi"
+                label="Taxi"
+                :items="listTaxi"
+                item-text="name"
+                item-value="_id"
+                v-model="selectTaxi"
                 clearable
-              />
+              >
+                <template v-slot:selection="{ item, index }">
+                  <div :key="index">{{ item.name }}-{{ item.phone }}</div>
+                </template>
+                <template v-slot:item="{ item }">
+                  <div>{{ item.name }}-{{ item.phone }}</div>
+                </template>
+              </v-select>
             </v-col>
           </v-row>
           <v-expansion-panels class="flex-1 overflow-y-auto elevation-3">
-            <transition-group
-              name="list-transition"
-              tag="div"
-              move-class="list-transition-move"
+            <v-expansion-panel
+              v-if="filteredTaxi"
+              v-for="item in filteredTaxi"
+              :key="item._id"
+              @click="
+                () => {
+                  if (selectTaxi === item.driver_id) selectTaxi = null;
+                  else selectTaxi = item.driver_id;
+                }
+              "
             >
-              <v-expansion-panel
-                v-if="locationsWS"
-                v-for="item in locationsWS"
-                :key="item.id"
-              >
-                <v-expansion-panel-header
-                  >Update - {{ item.id }}
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <p>Taxi: {{ item.taxiLocations.taxi_name }}</p>
-                  <p>
-                    Số lượng hành khách:
-                    {{ item.taxiLocations.current_capacity }}
-                  </p>
-                  <p>
-                    Bắt đầu lúc:
-                    {{ unixToTime(item.taxiLocations.schedule.starts_at) }}
-                  </p>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-            </transition-group>
+              <v-expansion-panel-header
+                >Taxi: {{ item.driver_name }} - Capacity:
+                {{ item.current_capacity }}
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <h5 class="mb-2">
+                  {{ item.license_plate }} -
+                  {{
+                    listTaxi.find((taxi) => taxi._id === item.driver_id).phone
+                  }}
+                </h5>
+                <v-data-table
+                  hide-default-footer
+                  :headers="HEADER_CLUSTER"
+                  v-if="item.s && item.s.nodes"
+                  :items="
+                    lodash.uniq(item.s.nodes.map((node) => node.user_id)) || []
+                  "
+                  :items-per-page="-1"
+                  class="elevation-2"
+                  style="border: 1px solid #8080802b"
+                >
+                  <template v-slot:[`item.index`]="{ item, index }">
+                    {{ index + 1 }}
+                  </template>
+                  <template v-slot:[`item.name`]="{ item, index }">
+                    <div class="d-flex align-center gap-2">
+                      {{ listValidUser.find((user) => user._id === item).name }}
+                    </div>
+                  </template>
+                  <template v-slot:[`item.phone`]="{ item, index }">
+                    {{ listValidUser.find((user) => user._id === item).phone }}
+                  </template>
+                </v-data-table>
+              </v-expansion-panel-content>
+            </v-expansion-panel>
           </v-expansion-panels>
-        </v-tab-item>
-        <v-tab-item key="grouping" class="pa-4">
-          <template>
-            <h6 class="mb-2">Tạo</h6>
-          </template>
         </v-tab-item>
       </v-tabs-items>
     </div>
@@ -224,53 +259,72 @@ import { useLocation } from "@/store/location";
 import Instruction from "@/components/Instruction";
 import RoutingWithMarker from "@/components/RoutingWithMarker";
 import io from "socket.io-client";
-
 import { GET_ADDRESS_FROM_LATLNG, GET_TAXI_LIST } from "@/services/location";
-import moment from "moment";
 import { formattedTime, unixToTime, rules } from "@/utils/utilities";
-import {
-  filterOptions,
-  formCreateRideRequest,
-  formCreateTaxi,
-} from "@/utils/constant";
+import { formCreateRideRequest, HEADER_CLUSTER } from "@/utils/constant";
 import { genPolygons } from "@/utils/map";
+import { getAllUser } from "@/services/auth";
+import {
+  clearAllSchedule,
+  clearSchedule,
+  rideRequest,
+} from "@/services/rideRequest";
+import moment from "moment";
+import lodash from "lodash";
 
 export default {
   name: "HomeAdmin",
   components: { RoutingWithMarker, Instruction },
   data: () => ({
     showGrid: false,
-    locations: null,
-    locationsWS: [],
-    filterOptions,
-    filter: 0,
-    filterTaxi: 0,
+    locations: [],
     tab: "init",
     mapCursor: null,
     google: google,
-    formCreateTaxi: structuredClone(formCreateTaxi),
     formCreateRequest: structuredClone(formCreateRideRequest),
     rules,
-    isDemo: Boolean(JSON.parse(localStorage.getItem("isDemo"))),
+    listValidUser: [],
+    selectTaxi: "",
+    socket: null,
+    HEADER_CLUSTER,
+    lodash,
+    listTaxi: [],
   }),
   methods: {
-    async getTaxiList() {
+    async getTaxiList(taxiId) {
       this.loading(true);
+      await this.fetchAllUser();
       GET_TAXI_LIST().then((res) => {
         this.loading(false);
         this.locations = res.data;
+        if (taxiId) {
+          this.selectTaxi = taxiId;
+        }
       });
     },
-    async getCursorPosition() {
+    async getCursorPosition(type) {
       try {
         const { lat, lng } = this.mapCursor;
         if (lat && lng) {
           this.loading(true);
           GET_ADDRESS_FROM_LATLNG(lat, lng)
             .then((res) => {
-              this.formCreateTaxi.positionName =
-                res.data.results[0].formatted_address;
-              this.formCreateTaxi.position = this.mapCursor;
+              if (type === "pickup") {
+                this.formCreateRequest.pickup = structuredClone(
+                  res.data.results[0].formatted_address,
+                );
+                this.formCreateRequest.o = structuredClone([
+                  this.mapCursor.lat,
+                  this.mapCursor.lng,
+                ]);
+              } else
+                this.formCreateRequest.dropoff = structuredClone(
+                  res.data.results[0].formatted_address,
+                );
+              this.formCreateRequest.d = structuredClone([
+                this.mapCursor.lat,
+                this.mapCursor.lng,
+              ]);
             })
             .finally(() => {
               this.loading(false);
@@ -282,12 +336,61 @@ export default {
       this.formCreateRequest = structuredClone(formCreateRideRequest);
       this.$refs.formCreateRequestRef.resetValidation();
     },
-    resetFormCreateTaxi() {
-      this.formCreateTaxi = structuredClone(formCreateTaxi);
-      this.$refs.formCreateTaxiRef.resetValidation();
+    async createRideRequest() {
+      if (!this.$refs.formCreateRequestRef.validate()) return;
+      const newFormCreate = structuredClone(this.formCreateRequest);
+      newFormCreate.wp = [
+        moment(
+          `02-04-2023 ${formattedTime(newFormCreate.wpn)}`,
+          "DD-MM-YYYY HH:mm",
+        ).format(),
+        moment(
+          `02-04-2023 ${formattedTime(newFormCreate.wpn + 5)}`,
+          "DD-MM-YYYY HH:mm",
+        ).format(),
+      ];
+      newFormCreate.wd = [
+        moment(
+          `02-04-2023 ${formattedTime(newFormCreate.wdn)}`,
+          "DD-MM-YYYY HH:mm",
+        ).format(),
+        moment(
+          `02-04-2023 ${formattedTime(newFormCreate.wdn + 5)}`,
+          "DD-MM-YYYY HH:mm",
+        ).format(),
+      ];
+      newFormCreate.t = moment(
+        `02-04-2023 ${formattedTime(newFormCreate.wpn) - 10}`,
+        "DD-MM-YYYY HH:mm",
+      ).format();
+      const { wpn, wdn, pickup, dropoff, ...params } = newFormCreate;
+      try {
+        this.loading(true);
+        const { data } = await rideRequest(params);
+        requestAnimationFrame(() => {
+          this.alert.success(
+            `Create request successfully. \n ${data?.taxi_driver_name}-${data?.taxi_license_plate}`,
+          );
+        });
+        this.formCreateRequest.owner = null;
+        this.getTaxiList(data.taxi_id);
+      } catch (e) {
+        this.alert.error("Create request failed");
+      } finally {
+        this.loading(false);
+      }
     },
-    createRideRequest() {
-      console.log(this.formCreateRequest);
+    async clearScheduleTaxi(id) {
+      this.loading(true);
+      try {
+        await clearSchedule(id);
+        this.alert.success("Clear schedule success");
+      } catch (e) {
+        this.alert.error("Clear schedule fail");
+      } finally {
+        this.loading(false);
+        this.getTaxiList();
+      }
     },
     websocketConnect() {
       const socket = io("http://45.32.102.194:4001");
@@ -301,13 +404,38 @@ export default {
       });
 
       socket.on("SCHEDULE_UPDATED", (taxiLocations) => {
-        this.alert.info("Yêu cầu đi xe mới đã được tạo");
+        this.alert.info("A request has been created");
         this.getTaxiList();
-        this.locationsWS = [
-          { taxiLocations, id: moment().format("HH:mm:ss") },
-          ...this.locationsWS,
-        ];
       });
+      this.socket = socket;
+    },
+    importFileMovement() {
+      this.$refs.fileInput2.click();
+    },
+    async onFileChange(event) {
+      this.listFrequentSorted = [];
+      this.showFrequent = false;
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const listRequest = JSON.parse(reader.result);
+        try {
+          this.loading(true);
+          await this.clearAllScheduleTaxi();
+          for (let request of listRequest) {
+            await rideRequest(request);
+          }
+          this.getTaxiList();
+        } catch (e) {
+          this.alert.error("Import error");
+        } finally {
+          this.loading(false);
+          this.alert.success("Import success");
+        }
+
+        this.$refs.fileInput2.value = "";
+      };
+      reader.readAsText(file);
     },
     genPolygons,
     unixToTime,
@@ -318,20 +446,53 @@ export default {
       };
     },
     formattedTime,
+    async clearAllScheduleTaxi() {
+      this.loading(true);
+      try {
+        await clearAllSchedule();
+        this.alert.success("Clear all schedule success");
+      } catch (e) {
+        this.alert.error("Clear all schedule fail");
+      } finally {
+        this.loading(false);
+        this.getTaxiList();
+      }
+    },
+    async fetchAllUser() {
+      await getAllUser().then((res) => {
+        this.listValidUser = res.data.filter(
+          (item) => item.role === "USER" && !item.is_driver,
+        );
+        this.listTaxi = res.data.filter(
+          (item) => item.role === "USER" && !!item.is_driver,
+        );
+      });
+    },
+  },
+  beforeRouteLeave(from, to, next) {
+    this.socket?.disconnect();
+    this.socket = null;
+    next();
   },
   mounted() {
     this.getTaxiList();
-    // this.websocketConnect();
+    this.websocketConnect();
   },
+
   computed: {
     ...mapState(useLocation, ["center"]),
+    filteredTaxi: function () {
+      if (!this.selectTaxi) return this.locations;
+      return this.locations?.filter((location) =>
+        location.driver_id.includes(this.selectTaxi),
+      );
+    },
   },
 };
 </script>
 <style lang="scss">
 .home-admin {
   .instruction {
-    width: 120px;
     position: absolute;
     bottom: 5px;
     right: 5px;

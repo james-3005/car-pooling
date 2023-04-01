@@ -4,7 +4,7 @@
       <v-btn icon plain raised rounded class="mr-2">
         <v-icon color="black" @click="$router.push('/')">mdi-arrow-left</v-icon>
       </v-btn>
-      <p class="text-h6 font-weight-bold mb-0">Chỉnh sửa hồ sơ</p>
+      <p class="text-h6 font-weight-bold mb-0">Info</p>
     </div>
     <v-tabs
       v-model="tab"
@@ -15,10 +15,10 @@
       slider-color="primary"
     >
       <v-tab key="info">
-        <h3>Đổi thông tin</h3>
+        <h3>Change Information</h3>
       </v-tab>
       <v-tab key="password">
-        <h3>Đổi mật khẩu</h3>
+        <h3>Change Password</h3>
       </v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab" class="">
@@ -37,21 +37,18 @@
             class="input"
             v-model="user.username"
           />
-          <v-text-field
-            label="Tên hiển thị"
-            class="input"
-            v-model="user.name"
-          />
+          <v-text-field label="Name" class="input" v-model="user.name" />
           <v-radio-group row v-model="user.is_driver">
             <v-radio
               v-for="item in TYPE_USERS"
               :key="item.value"
               :label="item.label"
               :value="item.value"
+              :disabled="item.disabled"
             />
           </v-radio-group>
           <v-btn color="primary" block height="50" @click="updateInfo"
-            >Cập nhật
+            >Change
           </v-btn>
         </v-form>
       </v-tab-item>
@@ -60,22 +57,22 @@
           <v-img src="@/assets/bg-info.svg" class="p-absolute position w-100" />
 
           <v-text-field
-            label="Mật khẩu cũ"
+            label="Old Password"
             class="input"
             v-model="form.oldPw"
           />
           <v-text-field
-            label="Mật khẩu mới"
+            label="New Password"
             class="input"
             v-model="form.newPw"
           />
           <v-text-field
-            label="Nhập lại mật khẩu mới"
+            label="Re-password"
             class="input"
             v-model="form.reNewPw"
           />
           <v-btn color="primary" block height="50" @click="updatePassword"
-            >Cập nhật
+            >Update Password
           </v-btn>
         </v-form>
       </v-tab-item>
@@ -92,7 +89,6 @@ import { changeInfo } from "@/services/auth";
   components: {},
 })
 export default class Info extends Vue {
-  GENDER_ITEMS = GENDER_ITEMS;
   TYPE_USERS = TYPE_USERS;
   user = JSON.parse(localStorage.getItem("user"));
   userName = JSON.parse(localStorage.getItem("user")).name;
@@ -107,11 +103,11 @@ export default class Info extends Vue {
     try {
       this.loading(true);
       await changeInfo(this.user._id, this.user);
-      this.alert.success("Cập nhật thành công, vui lòng đăng nhập lại");
+      this.alert.success("Update success");
       localStorage.removeItem("token");
       this.$router.push("/login");
     } catch (e) {
-      this.alert.error("Cập nhật thất bại");
+      this.alert.error("Update failed");
     } finally {
       this.loading(false);
     }
@@ -131,6 +127,10 @@ export default class Info extends Vue {
   .position {
     bottom: 0;
     left: 0;
+  }
+
+  .v-window {
+    overflow: visible;
   }
 }
 </style>

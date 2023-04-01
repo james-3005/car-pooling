@@ -1,6 +1,6 @@
 export enum RoleEnum {
-  customer = 0,
-  admin = 1,
+  customer = "USER",
+  admin = "ADMIN",
 }
 
 export interface IForm {

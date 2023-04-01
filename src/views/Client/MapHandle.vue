@@ -7,33 +7,13 @@
         style="width: 100%; flex: 1"
         @click="handleClick"
       >
-        <!--        <RoutingWithMarker-->
-        <!--            v-if="locations"-->
-        <!--            v-for="item in locations"-->
-        <!--            :key="locations._id"-->
-        <!--            :info="item"-->
-        <!--            :filter="filter"-->
-        <!--        />-->
-        <!--        <GmapInfoWindow />-->
-        <gmap-marker
-          v-if="formCreateRequest.start"
-          :position="formCreateRequest.start"
-          :animation="google.maps.Animation.DROP"
-          :icon="{
-            url: require('@/assets/marker.png'),
-            size: { width: 35, height: 35, f: 'px', b: 'px' },
-            scaledSize: { width: 35, height: 35, f: 'px', b: 'px' },
-          }"
-        />
-        <gmap-marker
-          v-if="formCreateRequest.destination"
-          :position="formCreateRequest.destination"
-          :animation="google.maps.Animation.DROP"
-          :icon="{
-            url: require('@/assets/marker.png'),
-            size: { width: 35, height: 35, f: 'px', b: 'px' },
-            scaledSize: { width: 35, height: 35, f: 'px', b: 'px' },
-          }"
+        <RoutingWithMarker
+          v-if="locations"
+          v-for="(item, index) in locations"
+          :key="index + 'schedule'"
+          :info="item"
+          :hideAction="true"
+          :listValidUser="listValidUser"
         />
         <gmap-marker
           v-if="mapCursor"
@@ -72,72 +52,65 @@
     </div>
     <div class="white elevation-5 pa-2 overflow-auto pa-4" style="width: 400px">
       <template>
-        <h6 class="mb-2">Đặt xe</h6>
+        <h6 class="mb-2">Create ride request</h6>
         <v-form ref="formCreateRequestRef">
-          <v-autocomplete
+          <v-text-field
             v-model="formCreateRequest.startName"
-            :items="itemsSearchListStart"
-            label="Điểm đón"
-            @change="onLocationChangeStart"
-            :search-input.sync="searchStart"
+            label="Pick up"
             hide-no-data
             :rules="[rules.required]"
             :menu-props="{ maxWidth: '368px' }"
             @click:append="() => getCursorPosition('start')"
             append-icon="mdi-crosshairs-gps"
           />
-          <v-autocomplete
+          <v-text-field
             v-model="formCreateRequest.destinationName"
-            :items="itemsSearchListEnd"
-            label="Điểm trả"
-            @change="onLocationChangeEnd"
-            :search-input.sync="searchEnd"
+            label="Drop off"
             hide-no-data
             :rules="[rules.required]"
-            :menu-props="{ maxWidth: '368px' }"
             @click:append="() => getCursorPosition('end')"
             append-icon="mdi-crosshairs-gps"
           />
-          <v-subheader>Khoảng thời gian đón</v-subheader>
-          <v-range-slider
+          <v-subheader>Pick up time (expect)</v-subheader>
+          <v-slider
             :min="0"
             :max="1440"
             :step="5"
             ticks-labels
             tick-size="3"
             thumb-label="always"
-            v-model="formCreateRequest.wp"
+            v-model="formCreateRequest.wpn"
             :rules="[rules.required]"
           >
             <template #thumb-label="{ value }">
               {{ formattedTime(value) }}
             </template>
-          </v-range-slider>
-          <v-subheader>Khoảng thời gian trả</v-subheader>
-          <v-range-slider
+          </v-slider>
+          <v-subheader>Drop off time (expect)</v-subheader>
+          <v-slider
             :min="0"
             :max="1440"
             :step="5"
             thumb-label="always"
             ticks-labels
             tick-size="3"
-            v-model="formCreateRequest.wd"
+            v-model="formCreateRequest.wdn"
             :rules="[
               rules.required,
-              (drop) => rules.isGreaterThanPick(formCreateRequest.wp, drop),
+              (drop) => rules.isGreaterThanPick(formCreateRequest.wpn, drop),
             ]"
           >
             <template #thumb-label="{ value }">
               {{ formattedTime(value) }}
             </template>
-          </v-range-slider>
+          </v-slider>
           <v-btn class="ma-2" small @click="resetFormCreateRequest">
             <v-icon small>mdi-backup-restore</v-icon>
-            Đặt lại
+            Reset
           </v-btn>
           <v-btn class="ma-2" small color="primary" @click="createRideRequest">
             <v-icon small>mdi-plus</v-icon>
-            Tạo request
+            Create request
           </v-btn>
         </v-form>
       </template>
@@ -161,12 +134,15 @@ import {
   GET_ADDRESS_FROM_LATLNG,
   GET_LATLNG_FROM_ADDRESS,
   GET_LOCATION_LIST,
+  GET_TAXI_LIST,
   ONLINE_BOOKING,
 } from "@/services/location";
 import moment from "moment";
 import { formattedTime, rules } from "@/utils/utilities";
 import Instruction from "@/components/Instruction";
 import { debounce } from "lodash";
+import { rideRequest } from "@/services/rideRequest";
+import { getAllUser } from "@/services/auth";
 
 export default Vue.extend({
   data: () => ({
@@ -181,12 +157,10 @@ export default Vue.extend({
     formattedTime,
     rules,
     google,
-    itemsSearchListStart: [],
-    itemsSearchListEnd: [],
-    searchEnd: "",
-    searchStart: "",
     selectedLocation: null,
     disabledUpdateLocation: true,
+    locations: [],
+    listValidUser: [],
   }),
   name: "MapHandle",
   components: {
@@ -206,15 +180,6 @@ export default Vue.extend({
       this.formCreateRequest = structuredClone(formCreateRideRequest);
       this.$refs.formCreateRequestRef.resetValidation();
     },
-    getWayPoint() {
-      if (!this.response) return null;
-      return this.response.schedule.nodes.slice(0, 25).map((item) => ({
-        lat: item.p[1],
-        lng: item.p[0],
-        eta: item.eta,
-        wp: item.wp,
-      }));
-    },
     async getCursorPosition(type) {
       try {
         const { lat, lng } = this.mapCursor;
@@ -226,13 +191,17 @@ export default Vue.extend({
               if (type === "start") {
                 this.formCreateRequest.startName =
                   res.data.results[0].formatted_address;
-                this.formCreateRequest.start = this.mapCursor;
-                this.searchStart = res.data.results[0].formatted_address;
+                this.formCreateRequest.o = structuredClone([
+                  this.mapCursor.lat,
+                  this.mapCursor.lng,
+                ]);
               } else {
                 this.formCreateRequest.destinationName =
                   res.data.results[0].formatted_address;
-                this.formCreateRequest.destination = this.mapCursor;
-                this.searchEnd = res.data.results[0].formatted_address;
+                this.formCreateRequest.d = structuredClone([
+                  this.mapCursor.lat,
+                  this.mapCursor.lng,
+                ]);
               }
             })
             .finally(() => {
@@ -241,95 +210,77 @@ export default Vue.extend({
             });
         }
       } catch (e) {
-        this.alert.warning("Bạn chưa chọn điểm");
+        this.alert.warning("Please select location on the map");
       }
     },
-    // async querySearching() {
-    //   try {
-    //     const {
-    //       pickEarly,
-    //       pickLate,
-    //       dropEarly,
-    //       dropLate,
-    //       startValue,
-    //       endValue,
-    //     } = this.$route.query;
-    //     const { data } = await ONLINE_BOOKING({
-    //       t: moment().toISOString(),
-    //       o_alias: startValue,
-    //       d_alias: endValue,
-    //       wp: [
-    //         moment(pickEarly, "HH:mm").toISOString(),
-    //         moment(pickLate, "HH:mm").toISOString(),
-    //       ],
-    //       wd: [
-    //         moment(dropEarly, "HH:mm").toISOString(),
-    //         moment(dropLate, "HH:mm").toISOString(),
-    //       ],
-    //     });
-    //     this.alert.success("Tìm thấy chuyến đi");
-    //     this.response = data;
-    //     this.loading(false);
-    //   } catch (e) {
-    //     this.confirm({
-    //       title: "Không tìm thấy chuyến đi",
-    //       content: e.response.data.message,
-    //       checkAction: () => {},
-    //     });
-    //     this.loading(false);
-    //   }
-    // },
     handleClick(e) {
       this.mapCursor = {
         lat: e.latLng.lat(),
         lng: e.latLng.lng(),
       };
     },
-    createRideRequest() {},
-    onLocationChangeStart() {
-      if (this.disabledUpdateLocation) return;
-      GET_LATLNG_FROM_ADDRESS(this.searchStart).then((res) => {
-        this.formCreateRequest.start = res.data?.results[0]?.geometry?.location;
-      });
-    },
-    onLocationChangeEnd() {
-      if (this.disabledUpdateLocation) return;
-      GET_LATLNG_FROM_ADDRESS(this.searchEnd).then((res) => {
-        this.formCreateRequest.destination =
-          res.data?.results[0]?.geometry?.location;
-      });
-    },
-    fetchLocations: debounce(function (value, type) {
-      if (!value) {
-        if (type === "start") this.itemsSearchListStart = [];
-        else this.itemsSearchListEnd = [];
-        return;
+    async createRideRequest() {
+      if (!this.$refs.formCreateRequestRef.validate()) return;
+      const newFormCreate = structuredClone(this.formCreateRequest);
+      newFormCreate.wp = [
+        moment(
+          `02-04-2023 ${formattedTime(newFormCreate.wpn)}`,
+          "DD-MM-YYYY HH:mm",
+        ).format(),
+        moment(
+          `02-04-2023 ${formattedTime(newFormCreate.wpn + 5)}`,
+          "DD-MM-YYYY HH:mm",
+        ).format(),
+      ];
+      newFormCreate.wd = [
+        moment(
+          `02-04-2023 ${formattedTime(newFormCreate.wdn)}`,
+          "DD-MM-YYYY HH:mm",
+        ).format(),
+        moment(
+          `02-04-2023 ${formattedTime(newFormCreate.wdn + 5)}`,
+          "DD-MM-YYYY HH:mm",
+        ).format(),
+      ];
+      newFormCreate.t = moment(
+        `02-04-2023 ${formattedTime(newFormCreate.wpn) - 7}`,
+        "DD-MM-YYYY HH:mm",
+      ).format();
+      const { wpn, wdn, startName, destinationName, ...params } = newFormCreate;
+      try {
+        this.loading(true);
+        const { data } = await rideRequest(params);
+        this.alert.success(
+          `Create request successfully. \n ${data?.taxi_driver_name}-${data?.taxi_license_plate}`,
+        );
+        this.getTaxiList(data.taxi_id);
+      } catch (e) {
+        this.alert.error("Create request failed");
+      } finally {
+        this.loading(false);
       }
-      GET_LOCATION_LIST(value).then((res) => {
-        if (type === "start")
-          this.itemsSearchListStart = res.data?.predictions?.map((item) => ({
-            text: item.description,
-            value: item.description,
-          }));
-        else
-          this.itemsSearchListEnd = res.data?.predictions?.map((item) => ({
-            text: item.description,
-            value: item.description,
-          }));
+    },
+    async getTaxiList(taxiId) {
+      this.loading(true);
+      GET_TAXI_LIST().then((res) => {
+        this.loading(false);
+        this.locations = res.data?.filter((item) => item._id === taxiId);
       });
-    }, 800),
+    },
     ...mapActions(useLocation, ["setCenter"]),
+  },
+  mounted() {
+    getAllUser().then((res) => {
+      this.listValidUser = res.data
+        .filter((item) => item.role === "USER" && !item.is_driver)
+        .map((item) => ({
+          text: item.name,
+          value: item._id,
+        }));
+    });
   },
   computed: {
     ...mapState(useLocation, ["location", "center"]),
-  },
-  watch: {
-    searchStart(value) {
-      if (value) this.fetchLocations(value, "start");
-    },
-    searchEnd(value) {
-      if (value) this.fetchLocations(value, "end");
-    },
   },
 });
 </script>

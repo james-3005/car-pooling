@@ -10,7 +10,7 @@
         :class="isMatch('/')"
         class="custom-btn"
       >
-        <span>Trang chủ</span>
+        <span>Home</span>
         <v-icon>mdi-taxi</v-icon>
       </v-btn>
       <v-btn
@@ -19,7 +19,7 @@
         :class="isMatch('/cluster')"
         class="custom-btn"
       >
-        <span>Ghép nhóm</span>
+        <span>Group</span>
         <v-icon>mdi-account-multiple</v-icon>
       </v-btn>
       <v-btn
@@ -28,7 +28,7 @@
         :class="isMatch('/info')"
         class="custom-btn"
       >
-        <span>Tài khoản</span>
+        <span>Account</span>
         <v-icon>mdi-account</v-icon>
       </v-btn>
     </v-bottom-navigation>

@@ -21,6 +21,7 @@ export default MapElementFactory({
   afterCreate(directionsRenderer) {
     directionsRenderer.setOptions({
       suppressMarkers: true,
+      preserveViewport: true,
       polylineOptions: {
         strokeColor: this.color,
         strokeWeight: 4,

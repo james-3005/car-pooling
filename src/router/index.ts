@@ -141,7 +141,7 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
   try {
     if (to.matched.some((record) => record.meta.requiredAuth)) {
-      const isLogged = localStorage.getItem("token") || "asd";
+      const isLogged = localStorage.getItem("token");
       if (!isLogged) {
         next({
           path: "/login",
@@ -150,7 +150,8 @@ router.beforeEach(async (to, from, next) => {
         });
         return;
       }
-      const role = localStorage.getItem("role") as unknown as RoleEnum;
+      const role = JSON.parse(localStorage.getItem("user") || "")
+        ?.role as unknown as RoleEnum;
       const isAdminRoute = to.path.startsWith("/admin");
       // @ts-ignore
       if (role == RoleEnum.admin) {

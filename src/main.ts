@@ -12,6 +12,7 @@ const pinia = createPinia();
 Vue.prototype.alert = alert;
 Vue.prototype.confirm = confirm;
 Vue.prototype.loading = loading;
+// Vue.config.silent = true;
 Vue.use(VueGoogleMaps, {
   load: {
     key: API_KEY,

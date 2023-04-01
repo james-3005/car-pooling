@@ -12,7 +12,7 @@
         <v-btn icon plain raised rounded class="mr-2">
           <v-icon color="black" @click="toggleDrawer">mdi-arrow-left</v-icon>
         </v-btn>
-        <p class="text-h6 font-weight-bold mb-0">Điểm đến</p>
+        <p class="text-h6 font-weight-bold mb-0">Pick up</p>
       </div>
       <v-card
         class="py-3 mt-4"

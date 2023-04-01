@@ -2,7 +2,7 @@
   <div>
     <RoutingMultipleMarkerWithColor
       travelMode="DRIVING"
-      :waypoints="waypoints"
+      :waypoints="waypoints || []"
       :color="color"
     />
     <gmap-marker
