@@ -206,6 +206,8 @@ export const formCreateRideRequest = {
   wd: "",
   pickup: "",
   dropoff: "",
+  o: null,
+  d: null,
 };
 
 export const formCreateRequestUser = {

@@ -259,8 +259,17 @@ import { useLocation } from "@/store/location";
 import Instruction from "@/components/Instruction";
 import RoutingWithMarker from "@/components/RoutingWithMarker";
 import io from "socket.io-client";
-import { GET_ADDRESS_FROM_LATLNG, GET_TAXI_LIST } from "@/services/location";
-import { formattedTime, unixToTime, rules } from "@/utils/utilities";
+import {
+  GET_ADDRESS_FROM_LATLNG,
+  GET_DISTANCE,
+  GET_TAXI_LIST,
+} from "@/services/location";
+import {
+  formattedTime,
+  unixToTime,
+  rules,
+  arrayToLatLng,
+} from "@/utils/utilities";
 import { formCreateRideRequest, HEADER_CLUSTER } from "@/utils/constant";
 import { genPolygons } from "@/utils/map";
 import { getAllUser } from "@/services/auth";
@@ -317,14 +326,15 @@ export default {
                   this.mapCursor.lat,
                   this.mapCursor.lng,
                 ]);
-              } else
+              } else {
                 this.formCreateRequest.dropoff = structuredClone(
                   res.data.results[0].formatted_address,
                 );
-              this.formCreateRequest.d = structuredClone([
-                this.mapCursor.lat,
-                this.mapCursor.lng,
-              ]);
+                this.formCreateRequest.d = structuredClone([
+                  this.mapCursor.lat,
+                  this.mapCursor.lng,
+                ]);
+              }
             })
             .finally(() => {
               this.loading(false);
@@ -338,6 +348,15 @@ export default {
     },
     async createRideRequest() {
       if (!this.$refs.formCreateRequestRef.validate()) return;
+      console.log(1123);
+      const data = await GET_DISTANCE(
+        arrayToLatLng(this.formCreateRequest.o),
+        arrayToLatLng(this.formCreateRequest.d),
+      );
+      if (data && data.distance <= 500) {
+        this.alert.error("Please create a request larger than 500m");
+        return;
+      }
       const newFormCreate = structuredClone(this.formCreateRequest);
       newFormCreate.wp = [
         moment(

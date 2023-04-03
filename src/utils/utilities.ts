@@ -144,3 +144,7 @@ export function formatCurrency(number: string | number) {
   // @ts-ignore
   return formatter.format(number);
 }
+
+export const arrayToLatLng = (a: [number, number]) => {
+  return { lat: a[0], lng: a[1] };
+};

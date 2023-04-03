@@ -561,6 +561,14 @@
                     </v-btn>
                     <v-btn
                       small
+                      color="success"
+                      @click="() => startRequest(item)"
+                    >
+                      <v-icon small>mdi-content-save</v-icon>
+                      Active group
+                    </v-btn>
+                    <v-btn
+                      small
                       color="error"
                       @click="() => removeGroup(item._id)"
                     >
@@ -625,6 +633,8 @@ import {
   SAVE_GROUP,
   UPDATE_GROUP,
 } from "@/services/crudGroup";
+import { REQUEST_GROUP } from "../../services/crudGroup";
+import { unixToTime } from "../../utils/utilities";
 
 export default {
   name: "ClusterAdmin",
@@ -794,6 +804,10 @@ export default {
       this.listUserFrequent = newListUser;
     },
     async miningCluster(type) {
+      if (this.form2.maxDistance <= 200) {
+        this.alert.error("Please choose a distance larger than 200");
+        return;
+      }
       this.clearResults();
       await this.saveMovement();
       const { size, hour, ...rest } = this.form2;
@@ -818,6 +832,10 @@ export default {
       }
     },
     async miningPatterns() {
+      if (this.form.maxDistance <= 200) {
+        this.alert.error("Please choose a distance larger than 200");
+        return;
+      }
       await this.saveHistory();
       try {
         this.loading(true);
@@ -895,7 +913,9 @@ export default {
         await SAVE_GROUP(params);
         if (!disableAlert) this.alert.success("Save Group successfully");
       } catch (e) {
-        this.alert.error("Save Group failed");
+        this.alert.error(
+          "Save Group failed, some user is already in another group",
+        );
       } finally {
         this.loading(false);
       }
@@ -969,7 +989,7 @@ export default {
         this.loading(false);
       }
     },
-    clearResults() {
+    async clearResults() {
       this.selectedGroup = null;
       this.validGroup = [];
     },
@@ -982,6 +1002,20 @@ export default {
         this.selectedEditGroup = null;
       } catch (e) {
         this.alert.error("Delete Group failed");
+      } finally {
+        this.loading(false);
+      }
+    },
+    async startRequest(item) {
+      try {
+        this.loading(true);
+        const t = moment.unix(item.pickup_t).subtract(10, "minutes");
+        await REQUEST_GROUP(item._id, {
+          t,
+        });
+        this.alert.success("Active group successfully");
+      } catch (e) {
+        this.alert.error("Active group failed, group is already active");
       } finally {
         this.loading(false);
       }

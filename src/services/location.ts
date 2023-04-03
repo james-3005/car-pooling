@@ -37,3 +37,16 @@ export const ONLINE_BOOKING = (params: createParams) =>
   request.post("/ride-requests", params);
 
 export const GET_TAXI_LIST = () => request.get("/taxis");
+
+export const GET_DISTANCE = (origin: any, destination: any) =>
+  axios
+    .get(
+      `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.lat},${origin.lng}&destination=${destination.lat},${destination.lng}&key=${API_KEY}&mode=walking`,
+    )
+    .then(({ data }) => {
+      return {
+        distance: data.routes[0].legs[0].distance.value,
+        duration: data.routes[0].legs[0].duration.value,
+      };
+    })
+    .catch((error) => console.error(error));
