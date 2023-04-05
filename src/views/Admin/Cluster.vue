@@ -965,6 +965,7 @@ export default {
         ).format();
         await UPDATE_GROUP(params);
         this.alert.success("Update Group successfully");
+        this.fetchSavedGroup();
       } catch (e) {
         this.alert.error("Update Group failed");
       } finally {
