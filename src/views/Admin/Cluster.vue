@@ -83,8 +83,8 @@
       <v-tabs-items v-model="tab">
         <v-tab-item key="frequent" class="pa-4">
           <h6 class="mb-2">1.1 Simulate movement history</h6>
-          <h6 class="my-2">Time picker</h6>
-          <v-row>
+          <h6 class="my-2" v-if="isDemo">Time picker</h6>
+          <v-row v-if="isDemo">
             <v-col cols="6">
               <DatePicker label="Date" v-model="form.date" hide-details />
             </v-col>
