@@ -378,6 +378,7 @@
             v-model.number="form2.minDuration"
             suffix="point"
             type="number"
+            messages="(1 point = 5 minutes)"
           />
           <v-text-field
             label="Min weight"
